@@ -1,0 +1,40 @@
+{
+  "stocks": [
+    {
+      "code": "4591",
+      "ticker": "4591.T",
+      "name": "RIBOMIC INC"
+    },
+    {
+      "code": "7746",
+      "ticker": "7746.T",
+      "name": "OKAMOTO GLASS CO LTD"
+    },
+    {
+      "code": "6330",
+      "ticker": "6330.T",
+      "name": "TOYO ENGINEERING CORP"
+    },
+    {
+      "code": "1662",
+      "ticker": "1662.T",
+      "name": "JAPAN PETROLEUM EXPLORATION CO "
+    },
+    {
+      "code": "4169",
+      "ticker": "4169.T",
+      "name": "ENECHANGE LTD"
+    },
+    {
+      "code": "4689",
+      "ticker": "4689.T",
+      "name": "LY CORPORATION"
+    },
+    {
+      "code": "9432",
+      "ticker": "9432.T",
+      "name": "NTT INC"
+    }
+  ],
+  "line_token": ""
+}

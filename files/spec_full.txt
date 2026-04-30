@@ -1,0 +1,334 @@
+?[] DayTrade Terminal v3
+[] Real Data Edition
+[] シスチE��設計仕様書
+--- TABLE START ---
+頁E�� | 冁E��
+ドキュメント番号 | DTT-SPEC-2026-001
+バ�Eジョン | v3.0.0
+作�E日 | 2026年4朁E5日
+対象シスチE�� | DayTrade Terminal�E�日本株チE��トレード支援シスチE���E�E
+引き継ぎ允E| Antigravity
+スチE�Eタス | 引き継ぎ用 最終版
+--- TABLE END ---
+[] 
+[] 
+[Heading 1] 1. シスチE��概要E
+[Heading 2] 1.1 目皁E
+[] 本シスチE��は、東京証券取引所上場銘柄を対象としたチE��トレード支援チE�Eルです、E刁E��のリアルタイム相場チE�Eタをもとに、テクニカル刁E��持E��（�Eリンジャーバンド�ERSI等）を自動計算し、売買シグナルを視覚的に提示することで、個人トレーダーの意思決定を支援します、E
+[] 
+[Heading 2] 1.2 シスチE��構�E�E��E体像�E�E
+[] 
+--- TABLE START ---
+レイヤー | コンポ�EネンチE| 役割
+チE�Eタソース | Yahoo Finance (yfinance) | 日本株1刁E�� OHLCV チE�Eタ取征E
+バックエンチE| Python / Flask (server.py) | チE�Eタ取得�E持E��計算�EREST API 提侁E
+フロントエンチE| HTML / CSS / JavaScript (index.html) | チャート描画・シグナル表示・操佁EUI
+ランチャー | PowerShell (start.ps1) | Windows 環墁E��けワンクリチE��起勁E
+--- TABLE END ---
+[] 
+[Heading 2] 1.3 ファイル構�E
+[] 
+--- TABLE START ---
+ファイル吁E| 種別 | 説昁E
+server.py | Python | Flask バックエンド。yfinance でリアルチE�Eタ取得�E吁E��持E��計算�EREST API
+index.html | HTML/JS/CSS | フロントエンド、Eanvas チャート描画・シグナル表示・惁E��パネル
+start.ps1 | PowerShell | Windows 起動スクリプト。依存ライブラリインスト�Eル→サーバ�E起動�Eブラウザ起勁E
+README.md | Markdown | セチE��アチE�E手頁E�EAPI リファレンス概要E
+--- TABLE END ---
+[] 
+[] 
+[Heading 1] 2. 動作環墁E�E依存関俁E
+[Heading 2] 2.1 忁E��環墁E
+[] 
+--- TABLE START ---
+区刁E| 要件 | 備老E
+OS | Windows 10/11 | macOS / Linux でも動作可能�E�Etart.ps1 は Windows 専用�E�E
+Python | 3.8 以上（推奨 3.11�E�E| python --version で確誁E
+インターネット接綁E| 忁E��E| Yahoo Finance API へのアクセスに使用
+ブラウザ | Chrome / Edge / Firefox�E�最新版！E| Canvas API・Fetch API 使用
+ポ�EチE| 5000 番�E�ECP�E�E| Flask サーバ�E使用。他アプリとの競合に注愁E
+--- TABLE END ---
+[] 
+[Heading 2] 2.2 Python 依存ライブラリ
+[] 
+--- TABLE START ---
+ライブラリ | バ�Eジョン | 用送E
+flask | 2.x 以丁E| REST API サーバ�Eフレームワーク
+flask-cors | 4.x 以丁E| CORS 設定（フロントエンドから�E API 呼び出し許可�E�E
+yfinance | 0.2.x 以丁E| Yahoo Finance から株価チE�Eタ�E�E刁E�� OHLCV�E�取征E
+pandas | 2.x 以丁E| チE�Eタフレーム操佁E
+numpy | 1.x / 2.x | 移動平坁E�E標準偏差等�E数値計箁E
+--- TABLE END ---
+[] 
+[] インスト�Eルコマンド：pip install flask flask-cors yfinance pandas numpy
+[] 
+--- TABLE START ---
+⚠ 注意：市場時間外につぁE�� yfinance の1刁E��チE�Eタは直迁E日刁E�Eみ取得可能です。東証取引時間！E:00、E1:30 / 12:30、E5:30�E�外�E前日チE�Eタを使用します。時間外に起動した場合でもシスチE��は動作しますが、最新のリアルタイムチE�Eタではありません、E
+--- TABLE END ---
+[] 
+[] 
+[Heading 1] 3. バックエンド仕様！Eerver.py�E�E
+[Heading 2] 3.1 監視銘柁E��スチE
+[] 以丁E0銘柄が�E期設定されてぁE��す。WATCH_STOCKS リストを編雁E��ることで変更可能です、E
+[] 
+--- TABLE START ---
+コーチE| チE��チE��ー | 銘柄吁E| セクター
+7203 | 7203.T | トヨタ自動軁E| 輸送機器
+6758 | 6758.T | ソニ�EグルーチE| 電気機器
+9984 | 9984.T | ソフトバンクグルーチE| 惁E��通信
+6857 | 6857.T | アドバンチE��チE| 電子部品E��半導体テスト！E
+8306 | 8306.T | 三菱UFJフィナンシャル | 銀行業
+1605 | 1605.T | INPEX | 石油・天然ガス
+7012 | 7012.T | 川崎重工業 | 機械�E�防衛�E宁E��！E
+4063 | 4063.T | 信越化学工業 | 化学�E�半導体材料！E
+6367 | 6367.T | ダイキン工業 | 機械�E�空調�E�E
+2413 | 2413.T | エムスリー | 医療系サービス
+--- TABLE END ---
+[] 
+[Heading 2] 3.2 REST API エンド�EインチE
+[] 
+[Heading 3] GET /api/health
+[] サーバ�E稼働確認用ヘルスチェチE��エンド�Eイント。フロントエンドが起動時に最初に呼び出します、E
+[] 
+--- TABLE START ---
+レスポンスフィールチE| 垁E| 説昁E
+status | string | "ok"
+time | string | ISO 8601 形式�E現在時刻
+--- TABLE END ---
+[] 
+[Heading 3] GET /api/stocks
+[] 全10銘柄の最新価格・変化玁E�Eトレンドスコアを一括取得します。上�Eトレンド�E強さ！ErendSlope�E�で降頁E��ートして返します、E
+[] 
+--- TABLE START ---
+レスポンスフィールチE| 垁E| 説昁E
+
+code | string | 銘柄コード（侁E "7203"�E�E
+ticker | string | Yahoo Finance チE��チE��ー�E�侁E "7203.T"�E�E
+name | string | 銘柄吁E
+price | float | 最新終値�E��E�E�E
+change | float | 当日変化玁E��E�E�。正値�E�上�E
+trendSlope | float | SMA10 の傾き。直迁E本の平坁E��化量。上�Eトレンド�E強さ�E持E��E
+volume | int | 直迁E刁E��の出来髁E
+time | string | 直近データの時刻�E�EH:MM 形式！E
+--- TABLE END ---
+[] 
+[Heading 3] GET /api/chart/{code}
+[] 持E��銘柁E�E1刁E��チャートデータ�E�最大70本�E�と全チE��ニカル持E���E売買シグナルを返します、E
+[] 
+--- TABLE START ---
+レスポンスフィールチE| 垁E| 説昁E
+
+status | string | "ok" また�E "error"
+code | string | 銘柄コーチE
+name | string | 銘柄吁E
+fetchedAt | string | チE�Eタ取得時刻�E�ESO 8601�E�E
+
+time | string | 時刻�E�EH:MM�E�E
+open / high / low / close | float | 始値・高値・安値・終値�E��E�E�E
+vol | int | 出来髁E
+
+bb.sma[] | float[] | ボリンジャーバンチE中忁E��！EMA20�E�E
+bb.upper[] | float[] | ボリンジャーバンチE+2ρEライン
+bb.lower[] | float[] | ボリンジャーバンチE-2ρEライン
+bb.pct_b[] | float[] | %B 値�E�E、E00%、バンド�E相対位置�E�E
+bb.bandwidth[] | float[] | バンド幁E%�E�Eupper-lower)/smaÁE00�E�E
+rsi[] | float[] | RSI�E�E4期間�E�。最初�E14本は null
+macd.macd[] | float[] | MACD ライン�E�EMA12 - EMA26�E�E
+macd.signal[] | float[] | シグナルライン�E�EACD の EMA9�E�E
+macd.histogram[] | float[] | MACD ヒストグラム
+
+type | string | "buy" また�E "sell"
+idx | int | candles[] の対応インチE��クス
+price | float | シグナル発生時の価格�E�EUY=安値 / SELL=高値�E�E
+rsi | float | シグナル発生時の RSI 値
+
+price / open / high / low | float | 最新ローソク足の OHLC
+rsi | float | 最新 RSI 値
+bb_upper / bb_lower / bb_mid | float | 最新 BB 値�E�上限・下限・中忁E��E
+pct_b | float | 最新 %B 値
+--- TABLE END ---
+[] 
+[Heading 2] 3.3 チE��ニカル持E��E計算仕槁E
+[] 
+--- TABLE START ---
+持E��E| パラメータ | 計算方法�E条件
+SMA�E�単純移動平坁E��E| 期間: 20 | 過去N本の終値単純平坁E��データ不足時�E null
+ボリンジャーバンチE| 期間: 20 / 乗数: 2ρE| 中忁E��E= SMA20。標準偏差は母標準偏差�E�Edof=0�E�。上限=SMA+2ρE��下限=SMA-2ρE
+%B | - | (終値 - 下限) / (上限 - 下限) ÁE100、E%=下限、E00%=上限、E0%=中忁E
+RSI | 期間: 14 | Wilder 方式（単純平坁E��、E4本未満は null、E0以上＝買われ過ぎ、E0以下＝売られ過ぎ
+MACD | Fast:12 / Slow:26 / Signal:9 | EMA12 - EMA26 = MACD ライン、EACD の EMA9 = シグナルライン
+--- TABLE END ---
+[] 
+[Heading 2] 3.4 売買シグナル生�EロジチE��
+[] 
+[] シグナルは BB と RSI の褁E��条件で判定します。連続シグナルを防ぐため、前回発生かめE本以上�E間隔が忁E��です、E
+[] 
+--- TABLE START ---
+シグナル種別 | 条件�E�ER 条件�E�E| 使用価格
+BUY�E�買ぁE��▲ | ①前�E足の安値ぁEBB下限以下、かつ現在足の終値がBB下限を上抜ぁE②RSI(14) < 40�E�売られ過ぎ�E�E| そ�Eローソク足の「安値、E
+SELL�E�売り）▼ | ①前�E足の高値ぁEBB上限以上、かつ現在足の終値がBB上限を下抜ぁE②RSI(14) > 60�E�買われ過ぎ�E�E| そ�Eローソク足の「高値、E
+--- TABLE END ---
+[] 
+[] 
+[Heading 1] 4. フロントエンド仕様！Endex.html�E�E
+[Heading 2] 4.1 画面レイアウチE
+[] 
+--- TABLE START ---
+エリア | 幁E| 冁E��
+ヘッダー | 全幁E| タイトル / 凡侁E/ サーバ�E接続状慁E/ 時訁E/ 更新ボタン
+銘柄リスト（左�E�E| 195px 固宁E| 上�E銘柄TOP10一覧。クリチE��で銘柄刁E��
+チャートエリア�E�中�E�E| flex: 1�E�残余幁E��E| チャート�EチE��ー / ローソク足チャート！Eanvas�E�E 出来高チャート！Eanvas�E�E
+惁E��パネル�E�右�E�E| 155px 固宁E| 銘柄惁E��・BB値・RSI・BUY/SELLボタン・シグナルログ
+チE��チE��ー�E�下部�E�E| 全幁E固宁E| 全10銘柄の価格・変化玁E��横スクロール表示
+--- TABLE END ---
+[] 
+[Heading 2] 4.2 ローソク足チャート描画仕槁E
+[] 
+--- TABLE START ---
+要素 | 表示仕槁E
+陽線（買ぁE��勢�E�E| 緑色�E�E4ec96a�E�。実体�E始値〜終値。�Eげ�E高値〜安値
+陰線（売り優勢�E�E| 赤色�E�Ef07060�E�。実体�E始値〜終値。�Eげ�E高値〜安値
+BB 帯塗りつぶぁE| 上限〜下限の篁E��を紫�E�Egba(184,112,240,0.12)�E�で塗りつぶぁE
+BB 上限・下限ライン | 紫�E�Egba(184,112,240,0.75)�E��E破線！Epx, 間隔3px�E�E
+BB 中忁E��！EA20�E�E| 青！E4aaff8�E��E実線、太ぁE1.2px
+BUY シグナル | 赤�E�Eff2828�E��E上向き三角形�E�▲�E�。矢印下に "BUY" チE��スト。安値の下に配置
+SELL シグナル | 青！E2868ff�E��E下向き三角形�E�▼�E�。矢印上に "SELL" チE��スト。高値の上に配置
+シグナル軌跡 | 一度描画したシグナルはチャートデータが保持してぁE��限り再描画で消えなぁE���E列に蓁E��！E
+X軸ラベル | 時刻�E�EH:MM 形式）を等間隔で表示。最右端は "now"
+Y軸ラベル | 5刁E��で価格表示。¥ 付きフォーマット！E000冁E��上�E小数1桁E��E
+--- TABLE END ---
+[] 
+[Heading 2] 4.3 自動更新仕槁E
+[] 
+--- TABLE START ---
+更新対象 | 間隔 | 動佁E
+時計表示 | 1私E| ヘッダーの現在時刻を更新
+チャートデータ | 30私E| 選択中銘柄の /api/chart/{code} を�EフェチE��して全要素を�E描画
+銘柄リスチE| 60私E| /api/stocks を�EフェチE��して価格・ランキングを更新
+手動更新 | ボタンクリチE��晁E| ヘッダーの「⟳ 更新」�Eタンで即時フルリフレチE��ュ
+--- TABLE END ---
+[] 
+[Heading 2] 4.4 サーバ�E接続フォールバック
+[] フロントエンド�E起動時に /api/health を呼び出し、サーバ�Eの稼働を確認します。サーバ�Eが未起動また�E応答しなぁE��合（タイムアウチE3秒）、�E動的にモチE��チE�Eタ�E��E部生�Eの擬似チE�Eタ�E�に刁E��替えて表示します。ユーザーへはヘッダーの接続状態インジケーターで通知します、E
+[] 
+--- TABLE START ---
+接続状慁E| 表示 | 動佁E
+正常接綁E| ◁ESERVER OK�E�緑！E| リアルチE�Eタを使用、E0私E60秒�E動更新
+未接続�Eオフライン | ◁Eサーバ�E未起動（赤�E�E| モチE��チE�Eタで動作。�E動更新は行わなぁE
+確認中 | ⏳ 接続確認中�E�黁E��E| 起動直後�E /api/health 呼び出し中
+--- TABLE END ---
+[] 
+[] 
+[Heading 1] 5. UI コンポ�Eネント詳細
+[Heading 2] 5.1 銘柄リスト（左パネル�E�E
+[] 
+--- TABLE START ---
+要素 | 仕槁E
+並び頁E| 上�Eトレンド強度�E�ErendSlope = SMA10の傾き）�E降頁E��毎�E更新
+トレンドバー | 吁E��柁E��端の縦線。上�E=緑、下降=赤
+価格表示 | 最新終値を¥形式でフォーマット（上�E=緑、下降=赤�E�E
+変化玁E| 当日変化玁E��E�E�、E/-付き
+選択状慁E| クリチE��で選択。選択中は青枠ハイライト。選択と同時にチャートデータを取征E
+エラー表示 | チE�Eタ取得失敗時はエラーメチE��ージを表示。クリチE��は無効化しなぁE
+--- TABLE END ---
+[] 
+[Heading 2] 5.2 右惁E��パネル
+[] 
+--- TABLE START ---
+頁E�� | 表示冁E��
+銘柄惁E��カーチE| 銘柄コード（大�E��E銘柄名�EOHLC�E�E値�E��E更新時刻
+BB カーチE| 上限(+2ρE・下限(-2ρEの価格 / %B値とそ�E判定（過熱・売られ過ぎ・中立！E/ RSI値・出来髁E/ 最新シグナル種別
+BUY ボタン | 緑色。最新シグナルぁEBUY の場合に点滁E��Elink アニメーション 0.9秒周期！E
+SELL ボタン | 赤色。最新シグナルぁESELL の場合に点滁E
+シグナルログ | 全銘柄のシグナル発生履歴。時刻・種別・価格・銘柄コードを表示。最新30件を新着頁E��表示
+--- TABLE END ---
+[] 
+[Heading 2] 5.3 %B 判定閾値
+[] 
+--- TABLE START ---
+%B 値 | 判宁E| 表示色 | 意味
+80% 以丁E| ⚠ 過�E | 赤�E�Ear(--red)�E�E| 価格ぁEBB上限付近。売りシグナル検訁E
+20% 以丁E| ⚠ 売られ過ぎ | 緑！Ear(--green)�E�E| 価格ぁEBB下限付近。買ぁE��グナル検訁E
+20、E0% | 中竁E| グレー�E�Ear(--text2)�E�E| バンド�Eで推移中
+--- TABLE END ---
+[] 
+[] 
+[Heading 1] 6. 起動�E運用手頁E
+[Heading 2] 6.1 初回セチE��アチE�E
+[] 
+[List Paragraph] ファイルをダウンロードし、任意�Eフォルダに配置�E�侁E C:\DayTrade\�E�E
+[List Paragraph] Python 3.8以上がインスト�EルされてぁE��ことを確誁E
+[List Paragraph] コマンド�Eロンプトまた�EPowerShellで以下を実衁E
+[] pip install flask flask-cors yfinance pandas numpy
+[List Paragraph] セチE��アチE�E完亁E
+[] 
+[Heading 2] 6.2 日常起動手頁E
+[] 
+[List Paragraph] start.ps1 を右クリチE�� ↁE「PowerShellで実行、E
+[List Paragraph] ブラウザが�E動で起動し index.html が開ぁE
+[List Paragraph] 右上�E接続状態が「● SERVER OK�E�緑）」になることを確誁E
+[List Paragraph] 銘柄リストにリアルチE�Eタが表示されれ�E起動完亁E
+[] 
+--- TABLE START ---
+📌 市場時間外�E起動につぁE�� 東証の取引時間！E:00、E1:30 / 12:30、E5:30�E�外に起動した場合、yfinance は前日また�E当日の利用可能な最新チE�Eタを返します。接続状態�E「SERVER OK」になりますが、リアルタイムではなぁE��に注意してください、E
+--- TABLE END ---
+[] 
+[Heading 2] 6.3 終亁E��頁E
+[] 
+[List Paragraph] start.ps1 を実行したPowerShellウィンドウを閉じる�E�Etrl+C�E�E
+[List Paragraph] Flask サーバ�Eが停止されめE
+[List Paragraph] ブラウザは手動で閉じめE
+[] 
+[] 
+[Heading 1] 7. 次期開発計画�E�未実裁E���E�E�E
+[Heading 2] 7.1 ポジション管琁E���E�E�次回実裁E��定！E
+[] 
+[] 以下�E機�EめEindex.html および server.py に追加実裁E��定です、E
+[] 
+--- TABLE START ---
+# | 機�E | 詳細仕槁E
+1 | 建値ライン表示 | ポジション保有中、チャート上に買ぁE��値を水平線（黁E��点線）で表示
+2 | 損�Eりライン設宁E| 建値から持E��E% 下�Eラインを赤色で表示。デフォルチE∁E%
+3 | 利確ライン設宁E| 建値から持E��E% 上�Eラインを緑色で表示。デフォルチE+15%
+4 | P&L リアルタイム計箁E| 現在値 vs 建値の損益�E��E・%�E�をリアルタイム表示
+5 | ポジションパネル | 保有銘柄一覧・建値・現値・損益・損�Eり幁E��右パネルに表示
+6 | アラート通知 | 損�Eりライン・利確ラインへの接近をブラウザ通知�E�Eeb Notifications API�E�E
+7 | ポジションチE�Eタ永続化 | localStorage また�E server.py のファイルI/OでセチE��ョン間保持
+--- TABLE END ---
+[] 
+[Heading 2] 7.2 そ�E他�E候補機�E
+[] 
+[List Paragraph] VWAP�E��E来高加重平坁E��格�E�ラインの表示
+[List Paragraph] ATR�E�真の値幁E���Eースの動的損�Eり幁E��箁E
+[List Paragraph] 褁E��時間足の刁E��替え！E刁E��・15刁E���E�E
+[List Paragraph] バックチE��ト機�E�E�シグナルの勝率・期征E��の検証�E�E
+[List Paragraph] メール / LINE 通知連携
+[List Paragraph] 銘柄カスタマイズ UI�E�EATCH_STOCKS をフロントエンドから編雁E��E
+[] 
+[] 
+[Heading 1] 8. 補足・注意事頁E
+[] 
+--- TABLE START ---
+⚠ 免責事頁E本シスチE��は惁E��提供�E学習目皁E�EチE�Eルです。表示されるシグナルは投賁E��言ではありません。実際の売買判断はご�E身の責任で行ってください。シスチE��の誤作動・チE�Eタ遁E��等による損失につぁE��開発老E�E一刁E�E責任を負ぁE��せん、E
+--- TABLE END ---
+[] 
+--- TABLE START ---
+頁E�� | 詳細
+チE�Eタの権利 | Yahoo Finance (yfinance) 利用規紁E��従ってください。商業利用には別途確認が忁E��でぁE
+CORS 設宁E| server.py の CORS は全オリジン許可�E�E�E�です。本番環墁E��は適刁E��制限してください
+ポ�Eト競吁E| 5000番ポ�Eトが使用中の場合、server.py の最下行�E port=5000 を変更してください
+PowerShell 実行�Eリシー | start.ps1 実行時に「実行できません」エラーが�Eる場吁E Set-ExecutionPolicy RemoteSigned -Scope CurrentUser を管琁E��E��して実衁E
+yfinance チE�Eタ制陁E| 1刁E��は直迁E日刁E�Eみ取得可能、E回�Eリクエストで最大70本�E�紁E0刁E��を取得しまぁE
+--- TABLE END ---
+[] 
+[Heading 2] 8.1 トラブルシューチE��ング
+[] 
+--- TABLE START ---
+痁E�� | 原因・対処況E
+接続状態が赤のまま | server.py が起動してぁE��ぁE��また�E5000番ポ�Eトが他�Eロセスで使用中。コマンド�Eロンプトで python server.py を手動実行してエラーを確誁E
+銘柄リストにチE�Eタが�EなぁE| インターネット接続を確認、Eahoo FinanceへのアクセスがブロチE��されてぁE��ぁE��確誁E
+チャートが空白 | 市場時間外でチE�EタがなぁE��合あり。直近�E取引日のチE�Eタは自動的に使用されめE
+yfinance インポ�Eトエラー | pip install yfinance --upgrade を実行して最新版に更新
+ブラウザでCORSエラー | flask-cors が正しくインスト�EルされてぁE��か確誁E pip install flask-cors
+--- TABLE END ---
+[] 
