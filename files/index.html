@@ -73,6 +73,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier 
 .si-price { font-size: 11px; }
 .si-chg   { font-size: 9px; }
 .si-err   { font-size: 9px; color: var(--red); }
+.sl-tabs { display: flex; gap: 2px; margin-bottom: 4px; }
+.sl-tab {
+  flex: 1; text-align: center; font-size: 10px; padding: 5px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  color: var(--text2); cursor: pointer; border-radius: 4px;
+}
+.sl-tab:hover { background: var(--bg3); }
+.sl-tab.active {
+  background: rgba(74,175,248,0.1); border-color: var(--blue); color: var(--blue); font-weight: bold;
+}
 
 /* ── CHART AREA ── */
 #chart-area { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
@@ -218,7 +228,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier 
 
 <div id="body">
   <div id="stock-list">
-    <div class="sl-title">▲ 上昇銘柄 TOP10</div>
+    <div class="sl-tabs">
+      <div id="tab-watch" class="sl-tab active" onclick="switchTab('watch')">監視銘柄</div>
+      <div id="tab-recom" class="sl-tab" onclick="switchTab('recom')">おすすめ</div>
+    </div>
     <div id="stock-items"><div class="err-msg">読込中...</div></div>
   </div>
 
@@ -348,9 +361,11 @@ const USE_MOCK_ON_FAIL   = true; // サーバー未起動時はモックデー�
 
 let selCode = '7203';
 let stocksCache = [];
+let recomCache = [];
 let chartCache  = null;
 let logEntries  = [];
 let serverOk    = false;
+let currentListTab = 'watch';
 
 let selInterval = '1m';
 let dt_positions = {}; // バックエンドからロードされるように変更
@@ -505,13 +520,13 @@ function showNotification(title, body, code, type) {
 //  FORMAT HELPERS
 // =============================================
 function fmtP(p) {
-  if (p == null) return '--';
+  if (p === null || p === undefined) return '--';
   if (p >= 10000) return '¥' + p.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   if (p >= 1000)  return '¥' + p.toFixed(1);
   return '¥' + p.toFixed(2);
 }
 function fmtChg(v) {
-  if (v == null) return { str: '--', cls: '' };
+  if (v === null || v === undefined) return { str: '--', cls: '' };
   return { str: (v >= 0 ? '+' : '') + v.toFixed(2) + '%', cls: v >= 0 ? 'up' : 'dn' };
 }
 
@@ -538,23 +553,33 @@ function setStatus(dotColor, dotText, srvCls, srvText) {
   dot.textContent = dotText;
   dot.style.color = dotColor === 'ok' ? 'var(--green)' : dotColor === 'err' ? 'var(--red)' : 'var(--amber)';
   const srv = document.getElementById('server-status');
-  srv.className = 'server-status ' + srvCls;
+  srv.className = srvCls;
   srv.textContent = srvText;
-  // force class on element
-  document.getElementById('server-status').className = srvCls;
-  document.getElementById('server-status').textContent = srvText;
 }
 
 // =============================================
 //  FETCH STOCKS LIST
 // =============================================
+function switchTab(tab) {
+  currentListTab = tab;
+  document.getElementById('tab-watch').className = 'sl-tab' + (tab==='watch'?' active':'');
+  document.getElementById('tab-recom').className = 'sl-tab' + (tab==='recom'?' active':'');
+  document.getElementById('stock-items').innerHTML = '<div class="err-msg">読込中...</div>';
+  fetchStocks();
+}
+
 async function fetchStocks() {
   if (!serverOk) return;
   try {
-    const r = await fetch(API + '/api/stocks', { signal: AbortSignal.timeout(15000) });
+    const ep = currentListTab === 'watch' ? '/api/stocks' : '/api/recommended';
+    const r = await fetch(API + ep, { signal: AbortSignal.timeout(15000) });
     const j = await r.json();
     if (j.status === 'ok') {
-      stocksCache = j.data;
+      if (currentListTab === 'watch') {
+        stocksCache = j.data;
+      } else {
+        recomCache = j.data;
+      }
       renderStockList();
       renderTicker();
     }
@@ -729,7 +754,14 @@ function calcSignals(candles, bb, rsi) {
 function renderStockList() {
   const el = document.getElementById('stock-items');
   el.innerHTML = '';
-  stocksCache.forEach(s => {
+  const dataList = currentListTab === 'watch' ? stocksCache : recomCache;
+  
+  if (dataList.length === 0) {
+     el.innerHTML = '<div class="err-msg" style="color:var(--text3)">データがありません</div>';
+     return;
+  }
+  
+  dataList.forEach(s => {
     const up = (s.change || 0) >= 0;
     const div = document.createElement('div');
     div.className = 'stock-item' + (s.code === selCode ? ' sel' : '');
@@ -738,8 +770,12 @@ function renderStockList() {
         <div class="si-info"><div class="si-code">${s.code}</div><div class="si-name">${s.name}</div></div>
         <div class="si-err">${s.error||'--'}</div>`;
     } else {
+      let extra = '';
+      if (currentListTab === 'recom' && s.reason) {
+          extra = `<div style="font-size:9px; color:var(--amber); margin-top:2px;">${s.reason}</div>`;
+      }
       div.innerHTML = `<div class="si-bar" style="background:${up?'var(--green)':'var(--red)'}"></div>
-        <div class="si-info"><div class="si-code">${s.code}</div><div class="si-name">${s.name}</div></div>
+        <div class="si-info"><div class="si-code">${s.code}</div><div class="si-name">${s.name}</div>${extra}</div>
         <div class="si-right">
           <div class="si-price" style="color:${up?'var(--green)':'var(--red)'}">${fmtP(s.price)}</div>
           <div class="si-chg" style="color:${up?'var(--green)':'var(--red)'}">${up?'+':''}${(s.change||0).toFixed(2)}%</div>
@@ -780,10 +816,10 @@ function drawChart() {
   const cW = W - PAD.l - PAD.r, cH = H - PAD.t - PAD.b;
 
   const allP = [
-    ...candles.flatMap(c=>[c.high,c.low]),
-    ...bb.upper.filter(v=>v!=null),
-    ...bb.lower.filter(v=>v!=null),
-    ...candles.map(c=>c.vwap).filter(v=>v!=null)
+    ...candles.flatMap(c => [c.high, c.low]),
+    ...bb.upper.filter(v => v !== null && v !== undefined),
+    ...bb.lower.filter(v => v !== null && v !== undefined),
+    ...candles.map(c => c.vwap).filter(v => v !== null && v !== undefined)
   ];
   const lo = Math.min(...allP)*0.9995;
   const hi = Math.max(...allP)*1.0005;
@@ -1074,8 +1110,13 @@ function renderInfoPanel() {
     selBtn.classList.remove('blink');
   } else {
     pPanel.innerHTML = `<div style="font-size:9px;color:var(--text2);text-align:center;padding:5px;">ノーポジション</div>`;
-    if (lastSig && lastSig.type==='buy') { buyBtn.classList.add('blink'); selBtn.classList.remove('blink'); }
-    else if (lastSig && lastSig.type==='sell') { selBtn.classList.add('blink'); buyBtn.classList.remove('blink'); }
+    if (lastSig && lastSig.type === 'buy') {
+      buyBtn.classList.add('blink');
+      selBtn.classList.remove('blink');
+    } else if (lastSig && lastSig.type === 'sell') {
+      selBtn.classList.add('blink');
+      buyBtn.classList.remove('blink');
+    }
   }
   renderStats();
 }
