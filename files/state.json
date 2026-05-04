@@ -2,304 +2,304 @@
   "positions": {},
   "signals": [
     {
-      "time": "15:24",
+      "time": "15:14",
+      "type": "buy",
+      "price": 417.8,
+      "code": "4689"
+    },
+    {
+      "time": "15:09",
+      "type": "buy",
+      "price": 418.5,
+      "code": "4689"
+    },
+    {
+      "time": "15:00",
       "type": "sell",
-      "price": 3005,
-      "code": "7203"
+      "price": 419.4,
+      "code": "4689"
+    },
+    {
+      "time": "14:55",
+      "type": "sell",
+      "price": 418.7,
+      "code": "4689"
+    },
+    {
+      "time": "14:50",
+      "type": "sell",
+      "price": 418.6,
+      "code": "4689"
+    },
+    {
+      "time": "14:40",
+      "type": "sell",
+      "price": 418.1,
+      "code": "4689"
+    },
+    {
+      "time": "14:35",
+      "type": "sell",
+      "price": 418.4,
+      "code": "4689"
+    },
+    {
+      "time": "15:24",
+      "type": "buy",
+      "price": 5152,
+      "code": "8058"
     },
     {
       "time": "15:19",
       "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "price": 5192,
+      "code": "8058"
     },
     {
-      "time": "15:14",
+      "time": "15:09",
       "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "price": 5217,
+      "code": "8058"
     },
     {
-      "time": "15:06",
+      "time": "15:04",
       "type": "buy",
-      "price": 3004,
-      "code": "7203"
+      "price": 5211,
+      "code": "8058"
     },
     {
-      "time": "15:01",
+      "time": "14:59",
       "type": "buy",
-      "price": 3002,
-      "code": "7203"
+      "price": 5236,
+      "code": "8058"
     },
     {
-      "time": "14:56",
+      "time": "14:54",
       "type": "buy",
-      "price": 3003,
-      "code": "7203"
+      "price": 5235,
+      "code": "8058"
     },
     {
-      "time": "14:47",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
+      "time": "14:49",
+      "type": "buy",
+      "price": 5229,
+      "code": "8058"
     },
     {
+      "time": "14:44",
+      "type": "buy",
+      "price": 5323,
+      "code": "8058"
+    },
+    {
+      "time": "14:39",
+      "type": "buy",
+      "price": 5365,
+      "code": "8058"
+    },
+    {
+      "code": "9432",
+      "price": 152.1,
+      "time": "15:15",
+      "type": "sell"
+    },
+    {
+      "code": "9432",
+      "price": 151.8,
+      "time": "15:00",
+      "type": "buy"
+    },
+    {
+      "code": "9432",
+      "price": 151.8,
+      "time": "14:55",
+      "type": "buy"
+    },
+    {
+      "code": "9432",
+      "price": 151.8,
+      "time": "14:48",
+      "type": "buy"
+    },
+    {
+      "code": "9432",
+      "price": 151.9,
       "time": "14:41",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
+      "type": "buy"
     },
     {
-      "time": "14:36",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
+      "code": "9432",
+      "price": 152.1,
+      "time": "15:15",
+      "type": "sell"
     },
     {
-      "time": "15:24",
-      "type": "sell",
-      "price": 3005,
-      "code": "7203"
+      "code": "9432",
+      "price": 151.8,
+      "time": "15:00",
+      "type": "buy"
     },
     {
-      "time": "15:19",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "code": "9432",
+      "price": 151.8,
+      "time": "14:55",
+      "type": "buy"
     },
     {
-      "time": "15:14",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "code": "9432",
+      "price": 151.8,
+      "time": "14:48",
+      "type": "buy"
     },
     {
-      "time": "15:06",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
-    },
-    {
-      "time": "15:01",
-      "type": "buy",
-      "price": 3002,
-      "code": "7203"
-    },
-    {
-      "time": "14:56",
-      "type": "buy",
-      "price": 3003,
-      "code": "7203"
-    },
-    {
-      "time": "14:47",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
-    },
-    {
+      "code": "9432",
+      "price": 151.9,
       "time": "14:41",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
+      "type": "buy"
     },
     {
-      "time": "14:36",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
+      "code": "9432",
+      "price": 152.1,
+      "time": "15:15",
+      "type": "sell"
     },
     {
-      "time": "15:24",
-      "type": "sell",
-      "price": 3005,
-      "code": "7203"
+      "code": "9432",
+      "price": 151.8,
+      "time": "15:00",
+      "type": "buy"
     },
     {
-      "time": "15:19",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "code": "9432",
+      "price": 151.8,
+      "time": "14:55",
+      "type": "buy"
     },
     {
-      "time": "15:14",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "code": "9432",
+      "price": 151.8,
+      "time": "14:48",
+      "type": "buy"
     },
     {
-      "time": "15:06",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
-    },
-    {
-      "time": "15:01",
-      "type": "buy",
-      "price": 3002,
-      "code": "7203"
-    },
-    {
-      "time": "14:56",
-      "type": "buy",
-      "price": 3003,
-      "code": "7203"
-    },
-    {
-      "time": "14:47",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
-    },
-    {
+      "code": "9432",
+      "price": 151.9,
       "time": "14:41",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
+      "type": "buy"
     },
     {
-      "time": "14:36",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
-    },
-    {
+      "code": "8058",
+      "price": 5152,
       "time": "15:24",
-      "type": "sell",
-      "price": 3005,
-      "code": "7203"
+      "type": "buy"
     },
     {
+      "code": "8058",
+      "price": 5192,
       "time": "15:19",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "type": "buy"
     },
     {
-      "time": "15:14",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "code": "8058",
+      "price": 5217,
+      "time": "15:09",
+      "type": "buy"
     },
     {
-      "time": "15:06",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
+      "code": "8058",
+      "price": 5211,
+      "time": "15:04",
+      "type": "buy"
     },
     {
-      "time": "15:01",
-      "type": "buy",
-      "price": 3002,
-      "code": "7203"
+      "code": "8058",
+      "price": 5236,
+      "time": "14:59",
+      "type": "buy"
     },
     {
-      "time": "14:56",
-      "type": "buy",
-      "price": 3003,
-      "code": "7203"
+      "code": "8058",
+      "price": 5235,
+      "time": "14:54",
+      "type": "buy"
     },
     {
-      "time": "14:47",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
+      "code": "8058",
+      "price": 5229,
+      "time": "14:49",
+      "type": "buy"
     },
     {
-      "time": "14:41",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
+      "code": "8058",
+      "price": 5323,
+      "time": "14:44",
+      "type": "buy"
     },
     {
-      "time": "14:36",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
+      "code": "8058",
+      "price": 5365,
+      "time": "14:39",
+      "type": "buy"
     },
     {
+      "code": "8058",
+      "price": 5152,
       "time": "15:24",
-      "type": "sell",
-      "price": 3005,
-      "code": "7203"
+      "type": "buy"
     },
     {
+      "code": "8058",
+      "price": 5192,
       "time": "15:19",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "type": "buy"
     },
     {
-      "time": "15:14",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
+      "code": "8058",
+      "price": 5217,
+      "time": "15:09",
+      "type": "buy"
     },
     {
-      "time": "15:06",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
+      "code": "8058",
+      "price": 5211,
+      "time": "15:04",
+      "type": "buy"
     },
     {
-      "time": "15:01",
-      "type": "buy",
-      "price": 3002,
-      "code": "7203"
+      "code": "8058",
+      "price": 5236,
+      "time": "14:59",
+      "type": "buy"
     },
     {
-      "time": "14:56",
-      "type": "buy",
-      "price": 3003,
-      "code": "7203"
+      "code": "8058",
+      "price": 5235,
+      "time": "14:54",
+      "type": "buy"
     },
     {
-      "time": "14:47",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
+      "code": "8058",
+      "price": 5229,
+      "time": "14:49",
+      "type": "buy"
     },
     {
-      "time": "14:41",
-      "type": "sell",
-      "price": 3008,
-      "code": "7203"
+      "code": "8058",
+      "price": 5323,
+      "time": "14:44",
+      "type": "buy"
     },
     {
-      "time": "14:36",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
+      "code": "8058",
+      "price": 5365,
+      "time": "14:39",
+      "type": "buy"
     },
     {
+      "code": "8058",
+      "price": 5152,
       "time": "15:24",
-      "type": "sell",
-      "price": 3005,
-      "code": "7203"
-    },
-    {
-      "time": "15:19",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
-    },
-    {
-      "time": "15:14",
-      "type": "buy",
-      "price": 3000,
-      "code": "7203"
-    },
-    {
-      "time": "15:06",
-      "type": "buy",
-      "price": 3004,
-      "code": "7203"
-    },
-    {
-      "time": "15:01",
-      "type": "buy",
-      "price": 3002,
-      "code": "7203"
+      "type": "buy"
     }
   ],
   "trades": []

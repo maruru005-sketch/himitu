@@ -14,18 +14,21 @@ import os
 import re
 from datetime import datetime
 import concurrent.futures
+import base64
+import xml.etree.ElementTree as ET
 
 import numpy as np
 import pandas  # noqa: F401 (DataFrameの型解決に必要)
 import requests
 import yfinance as yf
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)  # フロントエンドからのCORSリクエストを許可
 
-CONFIG_FILE = 'config.json'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_FILE = os.path.join(BASE_DIR, 'config.json')
 
 
 def load_config():
@@ -231,7 +234,62 @@ def calc_signals(candles, bb, rsi):
     return signals
 
 
-# ===== データ取得 =====
+def call_gemini_summary(api_key, news_items):
+    """Gemini API を使用してニュースの要約と材料判断を行う"""
+    url = (f"https://generativelanguage.googleapis.com/v1beta/"
+           f"models/gemini-flash-latest:generateContent?key={api_key}")
+    prompt = (
+        "以下の株式ニュースを読み、投資家にとって「買い材料」「売り材料」「中立」のいずれかを判断し、"
+        "その理由を3行程度の日本語で箇条書きで要約してください。\n\n"
+    )
+    for i, item in enumerate(news_items):
+        prompt += f"{i+1}. {item['title']}\n"
+
+    payload = {
+        "contents": [{
+            "parts": [{"text": prompt}]
+        }],
+        "generationConfig": {
+            "temperature": 0.7,
+            "maxOutputTokens": 200,
+        }
+    }
+    try:
+        resp = requests.post(url, json=payload, timeout=10)
+        j = resp.json()
+        if 'candidates' in j and len(j['candidates']) > 0:
+            return j['candidates'][0]['content']['parts'][0]['text']
+        
+        # エラー詳細の取得
+        if 'error' in j:
+            return f"AI要約エラー: {j['error'].get('message', 'Unknown error')}"
+        
+        return f"要約の生成に失敗しました。 (Response: {str(j)[:100]})"
+    except Exception as e:
+        return f"AI要約エラー: {str(e)}"
+
+
+
+# ===== AI要約キャッシュ =====
+NEWS_CACHE_FILE = os.path.join(BASE_DIR, 'news_cache.json')
+NEWS_CACHE_TTL = 3600 * 6 # 6時間有効（ニュースは頻繁には変わらないため）
+
+def load_news_cache():
+    if os.path.exists(NEWS_CACHE_FILE):
+        try:
+            with open(NEWS_CACHE_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except: return {}
+    return {}
+
+def save_news_cache(cache):
+    try:
+        with open(NEWS_CACHE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(cache, f, ensure_ascii=False, indent=2)
+    except: pass
+
+NEWS_CACHE = load_news_cache()
+
 
 def fetch_data(ticker_symbol, interval="1m", bars=70):
     """yfinanceでデータを取得"""
@@ -680,7 +738,7 @@ def backtest_api(code):
     })
 
 
-STATE_FILE = 'state.json'
+STATE_FILE = os.path.join(BASE_DIR, 'state.json')
 
 
 def load_state():
@@ -696,6 +754,139 @@ def load_state():
 def save_state(state):
     with open(STATE_FILE, 'w', encoding='utf-8') as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
+
+
+@app.route("/api/news/<code>", methods=["GET"])
+def get_news(code):
+    """銘柄に関連するニュースを取得し、AI要約を生成する"""
+    now = datetime.now().timestamp()
+    if code in NEWS_CACHE:
+        cached = NEWS_CACHE[code]
+        if now - cached['time'] < NEWS_CACHE_TTL:
+            return jsonify({
+                "status": "ok",
+                "news": cached['news'],
+                "summary": cached['summary'],
+                "cached": True
+            })
+
+    # Google News RSS からニュースを取得
+    # クエリに銘柄コードと「銘柄」を含める
+    url = f"https://news.google.com/rss/search?q={code}+銘柄+when:7d&hl=ja&gl=JP&ceid=JP:ja"
+    try:
+        resp = requests.get(url, timeout=5)
+        root = ET.fromstring(resp.content)
+        news_items = []
+        for item in root.findall(".//item")[:5]:
+            title = item.find("title").text if item.find("title") is not None else ""
+            link = item.find("link").text if item.find("link") is not None else ""
+            pub_date = item.find("pubDate").text if item.find("pubDate") is not None else ""
+            news_items.append({
+                "title": title,
+                "link": link,
+                "pubDate": pub_date
+            })
+
+        # AI要約の生成
+        summary = "AIによる要約機能を使用するには、設定でGemini APIキーを入力してください。"
+        api_key = load_config().get("gemini_api_key")
+        if api_key and news_items:
+            summary = call_gemini_summary(api_key, news_items)
+
+        # キャッシュに保存（成功・失敗に関わらず保存してAPIを保護）
+        NEWS_CACHE[code] = {
+            "news": news_items,
+            "summary": summary,
+            "time": now
+        }
+        
+        # エラーが含まれる場合は TTL を短くする（例：1分後に再試行可能に）
+        if "AI要約エラー" in summary or "失敗しました" in summary:
+            # 失敗時はキャッシュ上は古い時間にして、次回リクエストを許容するが、
+            # 短時間は保存して連続攻撃を防ぐ
+            NEWS_CACHE[code]["time"] = now - (NEWS_CACHE_TTL - 60)
+        
+        save_news_cache(NEWS_CACHE)
+
+        return jsonify({
+            "status": "ok",
+            "news": news_items,
+            "summary": summary
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/capture", methods=["POST"])
+def capture_api():
+    """フロントエンドから送信されたチャート画像を保存する"""
+    try:
+        data = request.json
+        img_data = data.get("image")
+        filename = data.get("filename")
+        if not img_data:
+            return jsonify({"status": "error", "message": "画像データがありません"}), 400
+        
+        if not filename:
+            filename = f"capture_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+            
+        # Base64のヘッダーを削除
+        if "," in img_data:
+            img_data = img_data.split(",")[1]
+            
+        # 保存先ディレクトリの確認（なければ作成）
+        log_dir = os.path.join(BASE_DIR, "logs")
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+            
+        filepath = os.path.join(log_dir, filename)
+        with open(filepath, "wb") as f:
+            f.write(base64.b64decode(img_data))
+            
+        return jsonify({"status": "ok", "filename": filename, "path": filepath})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/logs", methods=["GET"])
+def get_logs():
+    """保存されたトレード画像の一覧を取得する"""
+    log_dir = os.path.join(BASE_DIR, "logs")
+    if not os.path.exists(log_dir):
+        return jsonify({"status": "ok", "images": []})
+    
+    try:
+        files = [f for f in os.listdir(log_dir) if f.endswith(".png")]
+        # 更新日時降順にソート
+        files.sort(key=lambda x: os.path.getmtime(os.path.join(log_dir, x)), reverse=True)
+        
+        images = []
+        for f in files:
+            parts = f.replace(".png", "").split("_")
+            code = parts[1] if len(parts) > 1 else "Unknown"
+            type_str = parts[2] if len(parts) > 2 else "Unknown"
+            
+            ts = os.path.getmtime(os.path.join(log_dir, f))
+            dt_str = datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
+            
+            images.append({
+                "filename": f,
+                "code": code,
+                "type": type_str,
+                "time": dt_str,
+                "url": f"/api/logs/image/{f}"
+            })
+            
+        return jsonify({"status": "ok", "images": images})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/logs/image/<filename>", methods=["GET"])
+def get_log_image(filename):
+    """トレード画像を返す"""
+    log_dir = os.path.join(BASE_DIR, "logs")
+    return send_from_directory(log_dir, filename)
 
 
 @app.route("/api/state", methods=["GET", "POST"])

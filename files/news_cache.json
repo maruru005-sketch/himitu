@@ -1,0 +1,13 @@
+{
+  "4689": {
+    "news": [
+      {
+        "title": "ＬＩＮＥヤフー(株)【4689】：今の株価の理由は？値動きの背景をAIが解説 - Yahoo!ファイナンス",
+        "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBtc3FiblZ2bjV3OUdXYzJseGgxYlZRbjM3djJEWEN1UWxJTlRKdUw3S2dwa2s4ejRxQmtBWlhwbENpb2puNTdHUGJFVTNkWUJ5RGlXbGNRUVVIOUlXRVdr?oc=5",
+        "pubDate": "Fri, 01 May 2026 06:55:48 GMT"
+      }
+    ],
+    "summary": "AI要約エラー: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\nPlease retry in 57.328814793s.",
+    "time": 1777763161.381847
+  }
+}

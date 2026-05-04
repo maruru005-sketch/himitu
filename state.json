@@ -1,0 +1,306 @@
+{
+  "positions": {},
+  "signals": [
+    {
+      "time": "15:24",
+      "type": "buy",
+      "price": 5152,
+      "code": "8058"
+    },
+    {
+      "time": "15:19",
+      "type": "buy",
+      "price": 5192,
+      "code": "8058"
+    },
+    {
+      "time": "15:09",
+      "type": "buy",
+      "price": 5217,
+      "code": "8058"
+    },
+    {
+      "time": "15:04",
+      "type": "buy",
+      "price": 5211,
+      "code": "8058"
+    },
+    {
+      "time": "14:59",
+      "type": "buy",
+      "price": 5236,
+      "code": "8058"
+    },
+    {
+      "time": "14:54",
+      "type": "buy",
+      "price": 5235,
+      "code": "8058"
+    },
+    {
+      "time": "14:49",
+      "type": "buy",
+      "price": 5229,
+      "code": "8058"
+    },
+    {
+      "time": "14:44",
+      "type": "buy",
+      "price": 5323,
+      "code": "8058"
+    },
+    {
+      "time": "14:39",
+      "type": "buy",
+      "price": 5365,
+      "code": "8058"
+    },
+    {
+      "time": "15:24",
+      "type": "buy",
+      "price": 5152,
+      "code": "8058"
+    },
+    {
+      "time": "15:19",
+      "type": "buy",
+      "price": 5192,
+      "code": "8058"
+    },
+    {
+      "time": "15:09",
+      "type": "buy",
+      "price": 5217,
+      "code": "8058"
+    },
+    {
+      "time": "15:04",
+      "type": "buy",
+      "price": 5211,
+      "code": "8058"
+    },
+    {
+      "time": "14:59",
+      "type": "buy",
+      "price": 5236,
+      "code": "8058"
+    },
+    {
+      "time": "14:54",
+      "type": "buy",
+      "price": 5235,
+      "code": "8058"
+    },
+    {
+      "time": "14:49",
+      "type": "buy",
+      "price": 5229,
+      "code": "8058"
+    },
+    {
+      "time": "14:44",
+      "type": "buy",
+      "price": 5323,
+      "code": "8058"
+    },
+    {
+      "time": "14:39",
+      "type": "buy",
+      "price": 5365,
+      "code": "8058"
+    },
+    {
+      "time": "15:24",
+      "type": "buy",
+      "price": 5152,
+      "code": "8058"
+    },
+    {
+      "time": "15:19",
+      "type": "buy",
+      "price": 5192,
+      "code": "8058"
+    },
+    {
+      "time": "15:09",
+      "type": "buy",
+      "price": 5217,
+      "code": "8058"
+    },
+    {
+      "time": "15:04",
+      "type": "buy",
+      "price": 5211,
+      "code": "8058"
+    },
+    {
+      "time": "14:59",
+      "type": "buy",
+      "price": 5236,
+      "code": "8058"
+    },
+    {
+      "time": "14:54",
+      "type": "buy",
+      "price": 5235,
+      "code": "8058"
+    },
+    {
+      "time": "14:49",
+      "type": "buy",
+      "price": 5229,
+      "code": "8058"
+    },
+    {
+      "time": "14:44",
+      "type": "buy",
+      "price": 5323,
+      "code": "8058"
+    },
+    {
+      "time": "14:39",
+      "type": "buy",
+      "price": 5365,
+      "code": "8058"
+    },
+    {
+      "time": "15:24",
+      "type": "buy",
+      "price": 5152,
+      "code": "8058"
+    },
+    {
+      "time": "15:19",
+      "type": "buy",
+      "price": 5192,
+      "code": "8058"
+    },
+    {
+      "time": "15:09",
+      "type": "buy",
+      "price": 5217,
+      "code": "8058"
+    },
+    {
+      "time": "15:04",
+      "type": "buy",
+      "price": 5211,
+      "code": "8058"
+    },
+    {
+      "time": "14:59",
+      "type": "buy",
+      "price": 5236,
+      "code": "8058"
+    },
+    {
+      "time": "14:54",
+      "type": "buy",
+      "price": 5235,
+      "code": "8058"
+    },
+    {
+      "time": "14:49",
+      "type": "buy",
+      "price": 5229,
+      "code": "8058"
+    },
+    {
+      "time": "14:44",
+      "type": "buy",
+      "price": 5323,
+      "code": "8058"
+    },
+    {
+      "time": "14:39",
+      "type": "buy",
+      "price": 5365,
+      "code": "8058"
+    },
+    {
+      "time": "15:24",
+      "type": "buy",
+      "price": 5152,
+      "code": "8058"
+    },
+    {
+      "time": "15:19",
+      "type": "buy",
+      "price": 5192,
+      "code": "8058"
+    },
+    {
+      "time": "15:09",
+      "type": "buy",
+      "price": 5217,
+      "code": "8058"
+    },
+    {
+      "time": "15:04",
+      "type": "buy",
+      "price": 5211,
+      "code": "8058"
+    },
+    {
+      "time": "14:59",
+      "type": "buy",
+      "price": 5236,
+      "code": "8058"
+    },
+    {
+      "time": "14:54",
+      "type": "buy",
+      "price": 5235,
+      "code": "8058"
+    },
+    {
+      "time": "14:49",
+      "type": "buy",
+      "price": 5229,
+      "code": "8058"
+    },
+    {
+      "time": "14:44",
+      "type": "buy",
+      "price": 5323,
+      "code": "8058"
+    },
+    {
+      "time": "14:39",
+      "type": "buy",
+      "price": 5365,
+      "code": "8058"
+    },
+    {
+      "time": "15:24",
+      "type": "buy",
+      "price": 5152,
+      "code": "8058"
+    },
+    {
+      "time": "15:19",
+      "type": "buy",
+      "price": 5192,
+      "code": "8058"
+    },
+    {
+      "time": "15:09",
+      "type": "buy",
+      "price": 5217,
+      "code": "8058"
+    },
+    {
+      "time": "15:04",
+      "type": "buy",
+      "price": 5211,
+      "code": "8058"
+    },
+    {
+      "time": "14:59",
+      "type": "buy",
+      "price": 5236,
+      "code": "8058"
+    }
+  ],
+  "trades": []
+}

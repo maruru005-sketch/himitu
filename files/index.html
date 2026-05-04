@@ -22,14 +22,14 @@
   --purple:#b870f0;
   --amber: #f0b040;
 }
-html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg0); color: var(--text); }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Meiryo, sans-serif; font-size: 16px; background: var(--bg0); color: var(--text); }
 
 /* ── HEADER ── */
 #header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 5px 12px; background: var(--bg1); border-bottom: 1px solid var(--border);
 }
-.hd-logo { color: var(--blue); font-size: 13px; font-weight: bold; letter-spacing: 2px; }
+.hd-logo { color: var(--blue); font-size: 16px; font-weight: bold; letter-spacing: 2px; }
 .hd-center { display: flex; gap: 14px; align-items: center; font-size: 10px; }
 .leg { display: flex; align-items: center; gap: 4px; color: var(--text2); }
 .leg-line { width: 20px; height: 2px; border-radius: 1px; }
@@ -51,7 +51,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier 
 #body { display: flex; height: calc(100vh - 35px); gap: 6px; padding: 6px; }
 
 /* ── STOCK LIST ── */
-#stock-list { width: 195px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; }
+#stock-list { width: 250px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; }
 .sl-title {
   color: var(--blue); font-size: 10px; letter-spacing: 1px;
   text-align: center; padding: 3px; background: var(--bg2);
@@ -67,15 +67,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier 
 .stock-item.loading { opacity: 0.5; }
 .si-bar { width: 3px; height: 28px; border-radius: 2px; margin-right: 5px; flex-shrink: 0; }
 .si-info { flex: 1; min-width: 0; }
-.si-code { font-weight: bold; font-size: 13px; color: #d0e0f8; }
-.si-name { font-size: 11px; font-family: 'Meiryo', 'Noto Sans JP', sans-serif; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.si-code { font-weight: bold; font-size: 18px; color: #d0e0f8; }
+.si-name { font-size: 15px; font-family: 'Meiryo', 'Noto Sans JP', sans-serif; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .si-right { text-align: right; }
-.si-price { font-size: 11px; }
-.si-chg   { font-size: 9px; }
-.si-err   { font-size: 9px; color: var(--red); }
+.si-price { font-size: 16px; font-weight: bold; }
+.si-chg   { font-size: 13px; }
+.si-err   { font-size: 12px; color: var(--red); }
 .sl-tabs { display: flex; gap: 2px; margin-bottom: 4px; }
 .sl-tab {
-  flex: 1; text-align: center; font-size: 10px; padding: 5px;
+  flex: 1; text-align: center; font-size: 14px; padding: 8px;
   background: var(--bg2); border: 1px solid var(--border2);
   color: var(--text2); cursor: pointer; border-radius: 4px;
 }
@@ -120,21 +120,21 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier 
 }
 #resizer:hover, #resizer.active { background-color: rgba(74, 175, 248, 0.5); }
 
-#info-panel { width: 185px; flex-shrink: 0; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; }
-.icard { background: var(--bg1); border: 1px solid var(--border); border-radius: 5px; padding: 7px 9px; }
-.ilbl { font-size: 11px; color: var(--text3); letter-spacing: 1px; margin-bottom: 2px; }
-.ival { font-size: 14px; color: var(--text); }
+#info-panel { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+.icard { background: var(--bg1); border: 1px solid var(--border); border-radius: 5px; padding: 10px 12px; }
+.ilbl { font-size: 14px; color: var(--text3); letter-spacing: 1px; margin-bottom: 4px; font-weight: bold; }
+.ival { font-size: 18px; color: var(--text); }
 .ival.up  { color: var(--green); }
 .ival.dn  { color: var(--red); }
-.ival.big { font-size: 20px; font-weight: bold; }
-.idiv { border-top: 1px solid var(--border); margin: 5px 0; }
-.igrid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
-.igrid2 .k { font-size: 11px; color: var(--text3); }
-.igrid2 .v { font-size: 13px; color: #90aac8; }
+.ival.big { font-size: 32px; font-weight: bold; }
+.idiv { border-top: 1px solid var(--border); margin: 8px 0; }
+.igrid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.igrid2 .k { font-size: 14px; color: var(--text3); }
+.igrid2 .v { font-size: 16px; color: #90aac8; }
 
 .sig-btn {
-  width: 100%; padding: 10px; border: none; border-radius: 5px;
-  font-family: 'Courier New', monospace; font-size: 13px; font-weight: bold;
+  width: 100%; padding: 16px; border: none; border-radius: 5px;
+  font-family: inherit; font-size: 20px; font-weight: bold;
   letter-spacing: 2px; cursor: pointer; transition: opacity 0.1s;
 }
 .sig-btn.buy  { background: var(--green); color: #03100a; }
@@ -158,11 +158,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier 
 /* ── POSITION PANEL ── */
 #pos-panel {
   background: var(--bg1); border: 1px solid var(--border);
-  border-radius: 5px; padding: 10px; margin-bottom: 10px;
+  border-radius: 5px; padding: 12px; margin-bottom: 12px;
 }
-.pos-hdr { font-size: 13px; color: var(--blue); letter-spacing: 1px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-.pos-input { width: 45px; height: 22px; background: var(--bg0); border: 1px solid var(--border2); color: var(--text); font-size: 12px; text-align: center; border-radius: 3px; }
-.pos-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+.pos-hdr { font-size: 16px; color: var(--blue); letter-spacing: 1px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.pos-input { width: 60px; height: 30px; background: var(--bg0); border: 1px solid var(--border2); color: var(--text); font-size: 16px; text-align: center; border-radius: 3px; }
+.pos-row { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 6px; }
 .pos-lbl { color: var(--text3); }
 .pos-val { color: var(--text); }
 .pos-pl.up { color: var(--green); font-weight: bold; }
@@ -172,10 +172,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier 
 #ticker {
   position: fixed; bottom: 0; left: 0; right: 0;
   background: var(--bg1); border-top: 1px solid var(--border);
-  padding: 5px 8px; font-size: 12px; white-space: nowrap; overflow: hidden;
+  padding: 8px 12px; font-size: 16px; white-space: nowrap; overflow: hidden;
 }
-.ti { display: inline-block; margin-right: 25px; }
-.ti .tc { color: #8090a8; font-family: 'Meiryo', 'Noto Sans JP', sans-serif; font-size: 12px; font-weight: bold; }
+.ti { display: inline-block; margin-right: 30px; }
+.ti .tc { color: #8090a8; font-family: 'Meiryo', 'Noto Sans JP', sans-serif; font-size: 18px; font-weight: bold; }
 .ti .tp.u { color: var(--green); }
 .ti .tp.d { color: var(--red); }
 
@@ -290,6 +290,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier 
       <div class="ilbl" style="margin-top:4px;">シグナル</div>
       <div class="ival" id="i-sig">--</div>
     </div>
+
+    <div class="icard" id="news-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div class="ilbl" style="font-size: 15px; color: var(--amber); margin-bottom:0;">AIニュース要約</div>
+        <button id="news-refresh-btn" style="font-size:10px; background:var(--bg2); border:1px solid var(--border2); color:var(--text2); padding:2px 6px; border-radius:3px; cursor:pointer;" onclick="fetchNews(selCode, true)">更新</button>
+      </div>
+      <div id="news-summary" style="font-size:18px; line-height:1.6; color:#fff; margin-bottom:12px; font-weight:bold; background:rgba(255,255,255,0.08); padding:12px; border-radius:6px; border: 1px solid rgba(255,255,255,0.1);">銘柄を選択してください</div>
+      <div class="idiv"></div>
+      <div class="ilbl" style="font-size: 13px;">最新ニュース</div>
+      <div id="news-list" style="font-size:14px; color:var(--text2); max-height:250px; overflow-y:auto;"></div>
+    </div>
     
     <div id="pos-panel">
       <div class="pos-hdr">
@@ -359,14 +370,16 @@ const REFRESH_STOCKS_SEC = 60;   // 銘柄リスト更新間隔
 const REFRESH_CHART_SEC  = 30;   // チャート更新間隔
 const USE_MOCK_ON_FAIL   = true; // サーバー未起動時はモックデータ使用
 
-let selCode = '7203';
+let chartCache = null;
 let stocksCache = [];
 let recomCache = [];
-let chartCache  = null;
+let newsCache = {}; // { code: { summary, news, time } }
+const NEWS_CACHE_MIN = 5; // 5分間キャッシュ
 let logEntries  = [];
 let serverOk    = false;
 let currentListTab = 'watch';
 
+let selCode = '8058';
 let selInterval = '1m';
 let dt_positions = {}; // バックエンドからロードされるように変更
 let dt_trades = []; // トレード履歴
@@ -478,6 +491,22 @@ function togglePosition(type) {
   renderChart();
   renderInfoPanel();
   renderStats();
+  
+  // キャプチャ保存
+  captureChart(code, type);
+}
+
+async function captureChart(code, type) {
+  const canvas = document.getElementById('mainChart');
+  const dataUrl = canvas.toDataURL('image/png');
+  const filename = `cap_${code}_${type}_${new Date().getTime()}.png`;
+  try {
+    await fetch(API + '/api/capture', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ image: dataUrl, filename: filename })
+    });
+  } catch(e) { console.warn('capture err:', e); }
 }
 
 function checkAlerts(code, price) {
@@ -622,9 +651,63 @@ async function fetchChart(code) {
       renderInfoPanel();
       renderLog();
       checkAlerts(code, chartCache.summary.price);
+      // fetchNews(code); // チャート更新ごとの自動取得は廃止
     }
   } catch (e) { console.warn('chart fetch err:', e); }
   finally { document.getElementById('loading-overlay').classList.add('hidden'); }
+}
+
+let isNewsLoading = false;
+async function fetchNews(code, force = false) {
+  if (isNewsLoading && !force) return;
+  const now = new Date().getTime();
+  const cached = newsCache[code];
+  const summaryEl = document.getElementById('news-summary');
+  const listEl = document.getElementById('news-list');
+  const btn = document.getElementById('news-refresh-btn');
+
+  // キャッシュチェック（5分以内なら再利用）
+  if (!force && cached && (now - cached.time < NEWS_CACHE_MIN * 60 * 1000)) {
+    summaryEl.textContent = cached.summary;
+    listEl.innerHTML = cached.newsHtml;
+    return;
+  }
+
+  isNewsLoading = true;
+  btn.disabled = true;
+  btn.textContent = '...';
+  summaryEl.textContent = '最新ニュースを取得中...';
+  listEl.innerHTML = '';
+  try {
+    const r = await fetch(`${API}/api/news/${code}`);
+    const j = await r.json();
+    if (j.status === 'ok') {
+      summaryEl.textContent = j.summary;
+      const html = j.news.map(n => `
+        <div style="margin-bottom:12px; border-bottom:1px solid var(--border2); padding-bottom:8px;">
+          <a href="${n.link}" target="_blank" style="color:var(--blue); text-decoration:none; font-weight:bold; font-size:14px; display:block;">${n.title}</a>
+          <div style="font-size:11px; color:var(--text3); margin-top:4px;">${n.pubDate}</div>
+        </div>
+      `).join('');
+      listEl.innerHTML = html;
+      
+      // キャッシュに保存
+      newsCache[code] = {
+        summary: j.summary,
+        newsHtml: html,
+        time: now
+      };
+    } else {
+      summaryEl.textContent = 'ニュースを取得できませんでした';
+    }
+  } catch (e) { 
+    summaryEl.textContent = 'エラーが発生しました';
+    console.error(e);
+  } finally {
+    isNewsLoading = false;
+    btn.disabled = false;
+    btn.textContent = '更新';
+  }
 }
 
 // =============================================
@@ -791,6 +874,7 @@ async function selectStock(code) {
   renderStockList();
   if (serverOk) {
     await fetchChart(code);
+    fetchNews(code);
   } else {
     loadMockChart(code);
   }

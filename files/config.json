@@ -1,14 +1,14 @@
 {
   "stocks": [
     {
-      "code": "4591",
-      "ticker": "4591.T",
-      "name": "リボミック"
+      "code": "8058",
+      "ticker": "8058.T",
+      "name": "三菱商事"
     },
     {
-      "code": "7746",
-      "ticker": "7746.T",
-      "name": "岡本硝子"
+      "code": "7203",
+      "ticker": "7203.T",
+      "name": "トヨタ自動車"
     },
     {
       "code": "6330",
@@ -36,5 +36,6 @@
       "name": "ＮＴＴ"
     }
   ],
-  "line_token": ""
+  "line_token": "",
+  "gemini_api_key": "AIzaSyBMx5eGsSDgTz1g63Tw4q4sysw0B-rvhfg"
 }
