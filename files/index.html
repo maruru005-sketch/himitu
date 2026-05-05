@@ -201,6 +201,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI
 
 /* ── MISC ── */
 .err-msg { color: var(--red); font-size: 10px; padding: 4px 8px; text-align: center; }
+.tl-item { background: var(--bg0); border: 1px solid var(--border); border-radius: 4px; padding: 5px; cursor: pointer; transition: 0.2s; }
+.tl-item:hover { border-color: var(--blue); }
+.tl-img { width: 100%; height: auto; border-radius: 2px; }
+.tl-info { font-size: 11px; margin-top: 4px; color: var(--text2); display: flex; justify-content: space-between; }
+.tl-type.buy { color: var(--green); font-weight: bold; }
+.tl-type.sell { color: var(--red); font-weight: bold; }
 </style>
 </head>
 <body>
@@ -218,6 +224,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI
     </div>
   </div>
   <div class="hd-right">
+    <button class="btn secondary" style="padding:2px 8px;" onclick="openTradeLogModal()">📓 トレード日誌</button>
     <button class="btn secondary" style="padding:2px 8px;" onclick="openSettingsModal()">⚙️ 設定</button>
     <div id="server-status" class="chk">⏳ 接続確認中</div>
     <button id="refresh-btn" onclick="fullRefresh()">⟳ 更新</button>
@@ -361,6 +368,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI
   </div>
 </div>
 
+<div id="tradelog-modal" class="modal-overlay hidden">
+  <div class="modal-content" style="width: 800px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column;">
+    <div class="modal-close" onclick="closeTradeLogModal()">✖</div>
+    <div class="modal-title">トレード日誌（画像アーカイブ）</div>
+    <div id="tl-loading" class="err-msg" style="display:none;">読込中...</div>
+    <div id="tl-list" style="flex:1; overflow-y:auto; display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; padding-top: 10px;">
+    </div>
+  </div>
+</div>
+
 <script>
 // =============================================
 //  CONFIG
@@ -467,6 +484,39 @@ function runBacktest() {
   });
 }
 function closeBacktestModal() { document.getElementById('backtest-modal').classList.add('hidden'); }
+
+// =============================================
+//  TRADE LOG (IMAGES)
+// =============================================
+function openTradeLogModal() {
+  document.getElementById('tradelog-modal').classList.remove('hidden');
+  document.getElementById('tl-loading').style.display = 'block';
+  document.getElementById('tl-list').innerHTML = '';
+  
+  fetch(API + '/api/logs')
+    .then(r => r.json())
+    .then(j => {
+      document.getElementById('tl-loading').style.display = 'none';
+      if (j.status === 'ok' && j.images && j.images.length > 0) {
+        const html = j.images.map(img => `
+          <div class="tl-item" onclick="window.open('${API}${img.url}', '_blank')">
+            <img src="${API}${img.url}" class="tl-img" loading="lazy">
+            <div class="tl-info">
+              <span>${img.code} <span class="tl-type ${img.type}">${img.type.toUpperCase()}</span></span>
+              <span>${img.time.split(' ')[0]}</span>
+            </div>
+          </div>
+        `).join('');
+        document.getElementById('tl-list').innerHTML = html;
+      } else {
+        document.getElementById('tl-list').innerHTML = '<div style="color:var(--text3); padding:20px; text-align:center;">画像はありません</div>';
+      }
+    })
+    .catch(e => {
+      document.getElementById('tl-loading').textContent = 'エラー: ' + e;
+    });
+}
+function closeTradeLogModal() { document.getElementById('tradelog-modal').classList.add('hidden'); }
 
 // =============================================
 //  POSITIONS & ALERTS
