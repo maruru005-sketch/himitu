@@ -309,6 +309,27 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI
       <div id="news-list" style="font-size:14px; color:var(--text2); max-height:250px; overflow-y:auto;"></div>
     </div>
     
+    <div class="icard" id="ai-advice-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div class="ilbl" style="font-size: 15px; color: var(--purple); margin-bottom:0;">AI売買判断比較</div>
+        <button id="ai-advice-btn" style="font-size:10px; background:var(--bg2); border:1px solid var(--border2); color:var(--text2); padding:2px 6px; border-radius:3px; cursor:pointer;" onclick="fetchAIAdvice(selCode)">分析</button>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px;">
+        <div style="background:rgba(255,255,255,0.03); padding:8px; border-radius:4px; border:1px solid var(--border);">
+            <div style="font-size:10px; color:var(--text3); margin-bottom:4px;">ロジック判断</div>
+            <div id="logic-decision" style="font-size:16px; font-weight:bold; text-align:center;">--</div>
+        </div>
+        <div style="background:rgba(184,112,240,0.05); padding:8px; border-radius:4px; border:1px solid rgba(184,112,240,0.2);">
+            <div style="font-size:10px; color:var(--purple); margin-bottom:4px;">AI判断</div>
+            <div id="ai-decision" style="font-size:16px; font-weight:bold; text-align:center; color:var(--purple);">--</div>
+        </div>
+      </div>
+      <div id="ai-reason" style="font-size:12px; color:var(--text2); line-height:1.4; min-height:40px;">分析ボタンを押すと最新のAI判断を表示します。</div>
+      <div id="ai-score-bar" style="height:4px; background:var(--bg0); border-radius:2px; margin-top:8px; overflow:hidden;">
+        <div id="ai-score-fill" style="width:50%; height:100%; background:var(--purple); transition: width 0.5s;"></div>
+      </div>
+    </div>
+    
     <div id="pos-panel">
       <div class="pos-hdr">
         <span style="font-weight:bold;">POSITION</span>
@@ -391,6 +412,7 @@ let chartCache = null;
 let stocksCache = [];
 let recomCache = [];
 let newsCache = {}; // { code: { summary, news, time } }
+let aiAdviceCache = {}; // { code: { decision, reason, score, logic, time } }
 const NEWS_CACHE_MIN = 5; // 5分間キャッシュ
 let logEntries  = [];
 let serverOk    = false;
@@ -754,7 +776,60 @@ async function fetchNews(code, force = false) {
   } finally {
     isNewsLoading = false;
     btn.disabled = false;
+    btn.disabled = false;
     btn.textContent = '更新';
+  }
+}
+
+async function fetchAIAdvice(code) {
+  if (!serverOk) return;
+  const btn = document.getElementById('ai-advice-btn');
+  const logicEl = document.getElementById('logic-decision');
+  const aiEl = document.getElementById('ai-decision');
+  const reasonEl = document.getElementById('ai-reason');
+  const scoreFill = document.getElementById('ai-score-fill');
+
+  btn.disabled = true;
+  btn.textContent = '分析中...';
+  reasonEl.textContent = 'AIがデータを分析しています...';
+
+  try {
+    const r = await fetch(`${API}/api/ai-advice/${code}?interval=${selInterval}`);
+    const j = await r.json();
+    if (j.status === 'ok') {
+      const adv = j.advice;
+      const logic = j.logic_signal;
+
+      // UI更新
+      logicEl.textContent = logic ? (logic.type === 'buy' ? '買い' : '売り') : '待ち';
+      logicEl.style.color = logic ? (logic.type === 'buy' ? 'var(--green)' : 'var(--red)') : 'var(--text3)';
+      
+      aiEl.textContent = adv.decision;
+      aiEl.style.color = adv.decision === '買い' ? 'var(--green)' : adv.decision === '売り' ? 'var(--red)' : 'var(--purple)';
+      
+      reasonEl.textContent = adv.reason;
+      scoreFill.style.width = adv.score + '%';
+      
+      // キャッシュに保存
+      aiAdviceCache[code] = {
+        decision: adv.decision,
+        reason: adv.reason,
+        score: adv.score,
+        logic: logic,
+        time: new Date().getTime()
+      };
+      
+      // チャートにAIシグナルを表示するために再描画
+      renderChart();
+    } else {
+      reasonEl.textContent = '分析エラー: ' + j.message;
+    }
+  } catch (e) {
+    reasonEl.textContent = 'エラーが発生しました';
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '分析';
   }
 }
 
@@ -1038,6 +1113,25 @@ function drawChart() {
     }
   });
 
+    }
+  });
+  
+  // AI Signals (Stars)
+  const aiAdv = aiAdviceCache[chartCache.code];
+  if (aiAdv && (aiAdv.decision === '買い' || aiAdv.decision === '売り')) {
+    const x = toX(N - 1); // 最新の足に表示
+    const isBuy = aiAdv.decision === '買い';
+    const y = isBuy ? toY(candles[N-1].low) + 25 : toY(candles[N-1].high) - 25;
+    
+    // 星印を描画
+    ctx.fillStyle = 'var(--purple)';
+    ctx.font = '16px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('★', x, y);
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillText('AI ' + aiAdv.decision, x, isBuy ? y + 10 : y - 10);
+  }
+
   // X axis time labels
   ctx.fillStyle='#c0d0e0'; ctx.font='bold 11px Courier New'; ctx.textAlign='center';
   const step=Math.ceil(N/7);
@@ -1250,6 +1344,25 @@ function renderInfoPanel() {
       buyBtn.classList.remove('blink');
     }
   }
+    }
+  }
+  
+  // AI Advice UI Reset if code changed
+  const aiAdv = aiAdviceCache[code];
+  if (aiAdv) {
+    document.getElementById('logic-decision').textContent = aiAdv.logic ? (aiAdv.logic.type === 'buy' ? '買い' : '売り') : '待ち';
+    document.getElementById('logic-decision').style.color = aiAdv.logic ? (aiAdv.logic.type === 'buy' ? 'var(--green)' : 'var(--red)') : 'var(--text3)';
+    document.getElementById('ai-decision').textContent = aiAdv.decision;
+    document.getElementById('ai-decision').style.color = aiAdv.decision === '買い' ? 'var(--green)' : aiAdv.decision === '売り' ? 'var(--red)' : 'var(--purple)';
+    document.getElementById('ai-reason').textContent = aiAdv.reason;
+    document.getElementById('ai-score-fill').style.width = aiAdv.score + '%';
+  } else {
+    document.getElementById('logic-decision').textContent = '--';
+    document.getElementById('ai-decision').textContent = '--';
+    document.getElementById('ai-reason').textContent = '分析ボタンを押すと最新のAI判断を表示します。';
+    document.getElementById('ai-score-fill').style.width = '50%';
+  }
+  
   renderStats();
 }
 

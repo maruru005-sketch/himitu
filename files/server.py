@@ -273,6 +273,78 @@ def call_gemini_summary(api_key, news_items):
         return f"AI要約エラー: {str(e)}"
 
 
+def call_gemini_trade_decision(api_key, code, name, candles, indicators, news_summary):
+    """Gemini API を使用して、チャートデータとニュースから売買判断を行う"""
+    url = (f"https://generativelanguage.googleapis.com/v1beta/"
+           f"models/gemini-flash-latest:generateContent?key={api_key}")
+
+    # 直近のデータをテキスト化
+    recent_candles = candles[-20:]  # 直近20本
+    data_str = ""
+    for c in recent_candles:
+        data_str += f"Time:{c['time']} O:{c['open']} H:{c['high']} L:{c['low']} C:{c['close']} V:{c['vol']} VWAP:{c.get('vwap')}\n"
+
+    # インジケーターの最新値 (Noneガード)
+    def get_last(arr):
+        return arr[-1] if arr and arr[-1] is not None else "N/A"
+
+    last_rsi = get_last(indicators['rsi'])
+    last_bb = {k: get_last(v) for k, v in indicators['bb'].items()}
+    last_macd = {k: get_last(v) for k, v in indicators['macd'].items()}
+
+    prompt = (
+        f"あなたはプロのデイトレーダーです。以下の銘柄のデータとニュースを分析し、現時点での売買判断を下してください。\n\n"
+        f"銘柄: {name} ({code})\n"
+        f"【直近の価格推移】\n{data_str}\n"
+        f"【テクニカル指標】\n"
+        f"- RSI(14): {last_rsi}\n"
+        f"- Bollinger Bands(20,2σ): Upper:{last_bb['upper']} Mid:{last_bb['sma']} Lower:{last_bb['lower']} %B:{last_bb['pct_b']}\n"
+        f"- MACD: Line:{last_macd['macd']} Signal:{last_macd['signal']} Hist:{last_macd['histogram']}\n\n"
+        f"【関連ニュース要約】\n{news_summary}\n\n"
+        f"以下のフォーマットで日本語で回答してください（それ以外の文字は含めないでください）。\n"
+        f"判断: [買い / 売り / 待ち]\n"
+        f"理由: [3行程度の簡潔な理由]\n"
+        f"スコア: [0-100の強気度（50が中立）]"
+    )
+
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 300}
+    }
+
+    try:
+        resp = requests.post(url, json=payload, timeout=15)
+        j = resp.json()
+        if 'candidates' in j and len(j['candidates']) > 0:
+            text = j['candidates'][0]['content']['parts'][0]['text']
+            # パース（簡易）
+            decision = "待ち"
+            if "判断: 買い" in text:
+                decision = "買い"
+            elif "判断: 売り" in text:
+                decision = "売り"
+
+            score = 50
+            score_match = re.search(r"スコア: (\d+)", text)
+            if score_match:
+                score = int(score_match.group(1))
+
+            reason = "分析完了"
+            reason_match = re.search(r"理由: (.*?)(?:\nスコア|$)", text, re.DOTALL)
+            if reason_match:
+                reason = reason_match.group(1).strip()
+
+            return {"decision": decision, "reason": reason, "score": score, "raw": text}
+        
+        # エラー詳細の取得
+        if 'error' in j:
+            return {"decision": "エラー", "reason": j['error'].get('message', 'Unknown error'), "score": 50}
+            
+        return {"decision": "エラー", "reason": "AIからの応答が空です", "score": 50}
+    except Exception as e:
+        return {"decision": "エラー", "reason": str(e), "score": 50}
+
+
 
 # ===== AI要約キャッシュ =====
 NEWS_CACHE_FILE = os.path.join(BASE_DIR, 'news_cache.json')
@@ -835,6 +907,51 @@ def get_news(code):
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/ai-advice/<code>", methods=["GET"])
+def get_ai_advice(code):
+    """銘柄のAI売買判断を取得する"""
+    interval = request.args.get('interval', '1m')
+    api_key = os.getenv("GEMINI_API_KEY") or load_config().get("gemini_api_key")
+    if not api_key:
+        return jsonify({"status": "error", "message": "APIキーが設定されていません"}), 400
+
+    # 1. チャートデータ取得
+    stock = resolve_stock_info(code)
+    candles, _, err = fetch_data(stock["ticker"], interval=interval, bars=70)
+    if err or not candles:
+        return jsonify({"status": "error", "message": "データ取得失敗"}), 500
+
+    # 2. テクニカル計算
+    closes = [c["close"] for c in candles]
+    indicators = {
+        "bb": calc_bollinger(closes),
+        "rsi": calc_rsi(closes),
+        "macd": calc_macd(closes)
+    }
+
+    # 3. ニュース取得（既存のキャッシュ/取得ロジックを流用したいが、直接呼び出すのが難しいため簡易取得）
+    # get_news(code) を内部的に呼び出す
+    with app.test_request_context():
+        news_resp = get_news(code)
+        news_data = news_resp.get_json()
+        news_summary = news_data.get("summary", "ニュースなし")
+
+    # 4. AI判断呼び出し
+    advice = call_gemini_trade_decision(api_key, code, stock["name"], candles, indicators, news_summary)
+
+    # 5. ロジック判断（既存の BB+RSI シグナル）
+    logic_signals = calc_signals(candles, indicators["bb"], indicators["rsi"])
+    last_logic = logic_signals[-1] if logic_signals else None
+
+    return jsonify({
+        "status": "ok",
+        "code": code,
+        "advice": advice,
+        "logic_signal": last_logic,
+        "fetchedAt": datetime.now().isoformat()
+    })
 
 
 @app.route("/api/capture", methods=["POST"])

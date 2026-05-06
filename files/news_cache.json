@@ -7,8 +7,8 @@
         "pubDate": "Fri, 01 May 2026 06:55:48 GMT"
       }
     ],
-    "summary": "AI要約エラー: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\nPlease retry in 57.328814793s.",
-    "time": 1777763161.381847
+    "summary": "AI要約エラー: Your API key was reported as leaked. Please use another API key.",
+    "time": 1778049545.687275
   },
   "4169": {
     "news": [
@@ -91,7 +91,7 @@
   "8058": {
     "news": [
       {
-        "title": "三菱商事【8058】、今期最終は37％増益、15円増配へ | 決算速報 - 株探ニュース - 株探（かぶたん）",
+        "title": "三菱商事【8058】、今期最終は37％増益、15円増配へ | 決算速報 - 株探ニュース - 株探(かぶたん)",
         "link": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBoeTg1cDV5NjVCbGFiakVqb3NtcXJRUE9mcjNON2FQYVBDSGZKZEtwQndyb1d6UXRQMHBYZFNpcFF6S1NDbFl3N2lZWmFoX3VCMHc?oc=5",
         "pubDate": "Fri, 01 May 2026 05:00:00 GMT"
       },
@@ -117,7 +117,7 @@
       }
     ],
     "summary": "AI要約エラー: Your API key was reported as leaked. Please use another API key.",
-    "time": 1777973780.375256
+    "time": 1778049580.105691
   },
   "8306": {
     "news": [
