@@ -4,21 +4,31 @@
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $scriptDir
 
+# エンコーディングをUTF-8に設定（文字化け対策）
+$OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "   DayTrade Terminal v3 - Real Data Edition" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Python確認
-if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
+# Python確認と仮想環境の適用
+$pythonExe = "python"
+$venvPython = Join-Path (Split-Path $scriptDir -Parent) ".venv\Scripts\python.exe"
+
+if (Test-Path $venvPython) {
+    $pythonExe = $venvPython
+    Write-Host "[INFO] 仮想環境を使用します: $pythonExe" -ForegroundColor Gray
+} elseif (-not (Get-Command python -ErrorAction SilentlyContinue)) {
     Write-Host "[ERROR] Pythonが見つかりません。Python 3.8以上をインストールしてください。" -ForegroundColor Red
     pause; exit 1
 }
 
 # pip依存ライブラリインストール
 Write-Host "[1/3] 依存ライブラリを確認中..." -ForegroundColor Yellow
-python -m pip install flask flask-cors yfinance pandas numpy --quiet
+& $pythonExe -m pip install flask flask-cors yfinance pandas numpy requests python-dotenv --quiet
 if ($LASTEXITCODE -ne 0) {
     Write-Host "[ERROR] ライブラリのインストールに失敗しました。" -ForegroundColor Red
     pause; exit 1
@@ -28,10 +38,10 @@ Write-Host "      OK" -ForegroundColor Green
 # Flaskサーバー起動（バックグラウンド）
 Write-Host "[2/3] Flaskサーバーを起動中 (port 5000)..." -ForegroundColor Yellow
 $serverJob = Start-Job -ScriptBlock {
-    param($dir)
+    param($dir, $exe)
     Set-Location $dir
-    python server.py
-} -ArgumentList $scriptDir
+    & $exe server.py
+} -ArgumentList $scriptDir, $pythonExe
 
 Start-Sleep -Seconds 3
 

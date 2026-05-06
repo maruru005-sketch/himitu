@@ -16,6 +16,7 @@ from datetime import datetime
 import concurrent.futures
 import base64
 import xml.etree.ElementTree as ET
+from dotenv import load_dotenv
 
 import numpy as np
 import pandas  # noqa: F401 (DataFrameの型解決に必要)
@@ -29,6 +30,9 @@ CORS(app)  # フロントエンドからのCORSリクエストを許可
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, 'config.json')
+
+# .envファイルを読み込む
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 
 def load_config():
@@ -665,7 +669,9 @@ def notify_api():
     data = request.json
     message = data.get("message", "")
     config = load_config()
-    token = config.get("line_token", "")
+    # 環境変数から優先的に取得、なければconfigから
+    token = os.getenv("LINE_NOTIFY_TOKEN") or config.get("line_token") or config.get("line_notify_token")
+    
     if not token:
         return jsonify({
             "status": "error",
@@ -752,6 +758,18 @@ def load_state():
 
 
 def save_state(state):
+    # シグナルの重複排除 (code, time, type が一致するものをユニークにする)
+    if "signals" in state and isinstance(state["signals"], list):
+        seen = set()
+        unique_signals = []
+        # 新しいもの（リストの先頭）を優先しつつ重複排除
+        for sig in state["signals"]:
+            key = f"{sig.get('code')}_{sig.get('time')}_{sig.get('type')}"
+            if key not in seen:
+                unique_signals.append(sig)
+                seen.add(key)
+        state["signals"] = unique_signals[:100]  # 直近100件に制限して肥大化防止
+
     with open(STATE_FILE, 'w', encoding='utf-8') as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
 
@@ -789,7 +807,9 @@ def get_news(code):
 
         # AI要約の生成
         summary = "AIによる要約機能を使用するには、設定でGemini APIキーを入力してください。"
-        api_key = load_config().get("gemini_api_key")
+        # 環境変数から優先的に取得、なければconfigから
+        api_key = os.getenv("GEMINI_API_KEY") or load_config().get("gemini_api_key")
+        
         if api_key and news_items:
             summary = call_gemini_summary(api_key, news_items)
 

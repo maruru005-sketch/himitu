@@ -13,3 +13,5 @@ Thumbs.db
 
 # Project specific
 docs/archive/
+.env
+*.env

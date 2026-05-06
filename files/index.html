@@ -682,19 +682,17 @@ async function fetchChart(code) {
       chartCache = j;
       const sig = j.signals;
       if (sig.length > 0) {
-        const last = sig[sig.length - 1];
         const now = new Date();
         const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-        // 重複チェック
         let hasNew = false;
-        if (!logEntries.find(e => e.code === code && e.idx === last.idx)) {
-          sig.forEach(s => {
-            if (!logEntries.find(e => e.code === code && e.idx === s.idx)) {
-              logEntries.unshift({ time: j.candles[s.idx]?.time || t, type: s.type, price: s.price, code });
-              hasNew = true;
-            }
-          });
-        }
+        sig.forEach(s => {
+          const sTime = j.candles[s.idx]?.time || t;
+          // code, time, type が一致する既存ログがないかチェック
+          if (!logEntries.find(e => e.code === code && e.time === sTime && e.type === s.type)) {
+            logEntries.unshift({ time: sTime, type: s.type, price: s.price, code });
+            hasNew = true;
+          }
+        });
         if (hasNew) saveStateToBackend();
       }
       renderChart();
