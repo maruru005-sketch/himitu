@@ -234,46 +234,10 @@ def calc_signals(candles, bb, rsi):
                 "type": "sell", "idx": i,
                 "price": c["high"], "rsi": round(rsi[i], 1)
             })
-            last_sig_idx = i
     return signals
 
 
-def call_gemini_summary(api_key, news_items):
-    """Gemini API を使用してニュースの要約と材料判断を行う"""
-    url = (f"https://generativelanguage.googleapis.com/v1beta/"
-           f"models/gemini-flash-latest:generateContent?key={api_key}")
-    prompt = (
-        "以下の株式ニュースを読み、投資家にとって「買い材料」「売り材料」「中立」のいずれかを判断し、"
-        "その理由を3行程度の日本語で箇条書きで要約してください。\n\n"
-    )
-    for i, item in enumerate(news_items):
-        prompt += f"{i+1}. {item['title']}\n"
-
-    payload = {
-        "contents": [{
-            "parts": [{"text": prompt}]
-        }],
-        "generationConfig": {
-            "temperature": 0.7,
-            "maxOutputTokens": 200,
-        }
-    }
-    try:
-        resp = requests.post(url, json=payload, timeout=10)
-        j = resp.json()
-        if 'candidates' in j and len(j['candidates']) > 0:
-            return j['candidates'][0]['content']['parts'][0]['text']
-        
-        # エラー詳細の取得
-        if 'error' in j:
-            return f"AI要約エラー: {j['error'].get('message', 'Unknown error')}"
-        
-        return f"要約の生成に失敗しました。 (Response: {str(j)[:100]})"
-    except Exception as e:
-        return f"AI要約エラー: {str(e)}"
-
-
-def call_gemini_trade_decision(api_key, code, name, candles, indicators, news_summary):
+def call_gemini_trade_decision(api_key, code, name, candles, indicators, news_titles):
     """Gemini API を使用して、チャートデータとニュースから売買判断を行う"""
     url = (f"https://generativelanguage.googleapis.com/v1beta/"
            f"models/gemini-flash-latest:generateContent?key={api_key}")
@@ -877,13 +841,11 @@ def get_news(code):
                 "pubDate": pub_date
             })
 
-        # AI要約の生成
-        summary = "AIによる要約機能を使用するには、設定でGemini APIキーを入力してください。"
         # 環境変数から優先的に取得、なければconfigから
         api_key = os.getenv("GEMINI_API_KEY") or load_config().get("gemini_api_key")
         
-        if api_key and news_items:
-            summary = call_gemini_summary(api_key, news_items)
+        # 要約機能は削除されました。生のニュースリストのみを返します。
+        summary = ""
 
         # キャッシュに保存（成功・失敗に関わらず保存してAPIを保護）
         NEWS_CACHE[code] = {
@@ -903,7 +865,7 @@ def get_news(code):
         return jsonify({
             "status": "ok",
             "news": news_items,
-            "summary": summary
+            "summary": "" # 要約機能を削除
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -931,15 +893,15 @@ def get_ai_advice(code):
         "macd": calc_macd(closes)
     }
 
-    # 3. ニュース取得（既存のキャッシュ/取得ロジックを流用したいが、直接呼び出すのが難しいため簡易取得）
-    # get_news(code) を内部的に呼び出す
+    # 3. ニュースタイトル取得（AI判断用）
     with app.test_request_context():
         news_resp = get_news(code)
         news_data = news_resp.get_json()
-        news_summary = news_data.get("summary", "ニュースなし")
+        news_items = news_data.get("news", [])
+        news_titles = "\n".join([n["title"] for n in news_items[:5]])
 
-    # 4. AI判断呼び出し
-    advice = call_gemini_trade_decision(api_key, code, stock["name"], candles, indicators, news_summary)
+    # 4. AI判断呼び出し（要約の代わりにタイトルを渡す）
+    advice = call_gemini_trade_decision(api_key, code, stock["name"], candles, indicators, news_titles)
 
     # 5. ロジック判断（既存の BB+RSI シグナル）
     logic_signals = calc_signals(candles, indicators["bb"], indicators["rsi"])
