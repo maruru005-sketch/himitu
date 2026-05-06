@@ -410,9 +410,9 @@ let stocksCache = [];
 let recomCache = [];
 let newsCache = {}; // { code: { newsHtml, time } }
 let aiAdviceCache = {}; // { code: { decision, reason, score, logic, time } }
-const NEWS_CACHE_MIN = 5; 
 let logEntries  = [];
-let serverOk    = false;
+const REFRESH_AI_SEC = 300; // 5分おきにAI自動判断
+const NEWS_CACHE_MIN = 5; // 5分間キャッシュ
 let currentListTab = 'watch';
 
 let selCode = '8058';
@@ -806,6 +806,28 @@ async function fetchAIAdvice(code) {
       
       // チャートにAIシグナルを表示するために再描画
       renderChart();
+
+      // ログに記録 (買い・売りの場合)
+      if (adv.decision === '買い' || adv.decision === '売り') {
+        const type = adv.decision === '買い' ? 'buy' : 'sell';
+        const price = chartCache.summary.price;
+        const timeStr = new Date().toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
+        
+        // 既存ログに重複がなければ追加
+        const sigKey = `ai_${code}_${timeStr}_${type}`;
+        if (!logEntries.find(e => e.key === sigKey)) {
+          logEntries.unshift({
+            key: sigKey,
+            time: timeStr,
+            type: type,
+            price: price,
+            code: code,
+            isAi: true
+          });
+          renderLog();
+          saveStateToBackend(); // ログを永続化
+        }
+      }
     } else {
       reasonEl.textContent = '分析エラー: ' + j.message;
     }
@@ -1354,8 +1376,9 @@ function renderLog() {
   el.innerHTML = '';
   logEntries.slice(0, 30).forEach(e => {
     const d = document.createElement('div');
-    d.className = 'le';
-    d.innerHTML = `<span class="le-t">${e.time}</span><span class="le-tp ${e.type}">${e.type.toUpperCase()}</span><span class="le-p">${fmtP(e.price)}</span><span class="le-c">${e.code}</span>`;
+    d.className = 'le' + (e.isAi ? ' ai' : '');
+    const prefix = e.isAi ? '<span style="color:var(--purple); font-weight:bold; margin-right:4px;">[AI]</span>' : '';
+    d.innerHTML = `<span class="le-t">${e.time}</span>${prefix}<span class="le-tp ${e.type}">${e.type.toUpperCase()}</span><span class="le-p">${fmtP(e.price)}</span><span class="le-c">${e.code}</span>`;
     el.appendChild(d);
   });
 }
@@ -1469,6 +1492,7 @@ async function init() {
     await fetchChart(selCode);
     setInterval(fetchStocks, REFRESH_STOCKS_SEC * 1000);
     setInterval(() => fetchChart(selCode), REFRESH_CHART_SEC * 1000);
+    setInterval(() => fetchAIAdvice(selCode), REFRESH_AI_SEC * 1000); // AI自動更新
   } else {
     // オフライン時のローカルデータフォールバック
     dt_positions = JSON.parse(localStorage.getItem('dt_positions')) || {};

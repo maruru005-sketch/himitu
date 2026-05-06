@@ -800,7 +800,8 @@ def save_state(state):
         unique_signals = []
         # 新しいもの（リストの先頭）を優先しつつ重複排除
         for sig in state["signals"]:
-            key = f"{sig.get('code')}_{sig.get('time')}_{sig.get('type')}"
+            is_ai = sig.get('isAi', False)
+            key = f"{sig.get('code')}_{sig.get('time')}_{sig.get('type')}_{is_ai}"
             if key not in seen:
                 unique_signals.append(sig)
                 seen.add(key)
