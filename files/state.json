@@ -2,160 +2,250 @@
   "positions": {},
   "signals": [
     {
-      "time": "15:20",
-      "type": "buy",
-      "price": 2795.5,
-      "code": "8306"
-    },
-    {
-      "time": "15:15",
-      "type": "sell",
-      "price": 2805,
-      "code": "8306"
-    },
-    {
-      "time": "15:10",
-      "type": "sell",
-      "price": 2803.5,
-      "code": "8306"
-    },
-    {
-      "time": "15:05",
-      "type": "buy",
-      "price": 2800,
-      "code": "8306"
-    },
-    {
-      "time": "14:58",
-      "type": "buy",
-      "price": 2800.5,
-      "code": "8306"
-    },
-    {
-      "time": "14:53",
-      "type": "buy",
-      "price": 2800,
-      "code": "8306"
-    },
-    {
-      "time": "14:44",
-      "type": "sell",
-      "price": 2803,
-      "code": "8306"
-    },
-    {
-      "time": "14:36",
-      "type": "buy",
-      "price": 2800,
-      "code": "8306"
-    },
-    {
-      "time": "15:23",
-      "type": "buy",
-      "price": 2271,
-      "code": "6330"
-    },
-    {
-      "time": "15:18",
-      "type": "buy",
-      "price": 2269,
-      "code": "6330"
-    },
-    {
-      "time": "15:13",
-      "type": "buy",
-      "price": 2271,
-      "code": "6330"
-    },
-    {
-      "time": "15:08",
-      "type": "buy",
-      "price": 2282,
-      "code": "6330"
-    },
-    {
       "time": "15:03",
-      "type": "buy",
-      "price": 2280,
-      "code": "6330"
+      "type": "sell",
+      "price": 419.2,
+      "code": "4689"
+    },
+    {
+      "time": "15:02",
+      "type": "sell",
+      "price": 419.4,
+      "code": "4689"
+    },
+    {
+      "time": "15:01",
+      "type": "sell",
+      "price": 419.5,
+      "code": "4689"
+    },
+    {
+      "time": "14:59",
+      "type": "sell",
+      "price": 419.1,
+      "code": "4689"
     },
     {
       "time": "14:58",
-      "type": "buy",
-      "price": 2285,
-      "code": "6330"
+      "type": "sell",
+      "price": 419.1,
+      "code": "4689"
+    },
+    {
+      "time": "14:57",
+      "type": "sell",
+      "price": 419.1,
+      "code": "4689"
+    },
+    {
+      "time": "14:54",
+      "type": "sell",
+      "price": 418.7,
+      "code": "4689"
     },
     {
       "time": "14:53",
-      "type": "buy",
-      "price": 2288,
-      "code": "6330"
-    },
-    {
-      "time": "14:47",
-      "type": "buy",
-      "price": 2295,
-      "code": "6330"
-    },
-    {
-      "time": "14:40",
       "type": "sell",
-      "price": 2301,
-      "code": "6330"
+      "price": 418.6,
+      "code": "4689"
     },
     {
-      "time": "14:35",
+      "time": "14:52",
       "type": "sell",
-      "price": 2309,
-      "code": "6330"
+      "price": 418.5,
+      "code": "4689"
     },
     {
-      "time": "15:14",
+      "time": "14:51",
       "type": "sell",
-      "price": 330,
-      "code": "4169"
+      "price": 418.6,
+      "code": "4689"
     },
     {
-      "time": "15:07",
-      "type": "buy",
-      "price": 329,
-      "code": "4169"
+      "time": "14:43",
+      "type": "sell",
+      "price": 418.4,
+      "code": "4689"
     },
     {
-      "time": "14:49",
-      "type": "buy",
-      "price": 329,
-      "code": "4169"
+      "time": "14:42",
+      "type": "sell",
+      "price": 418.4,
+      "code": "4689"
     },
     {
+      "time": "14:41",
+      "type": "sell",
+      "price": 418.2,
+      "code": "4689"
+    },
+    {
+      "time": "14:39",
+      "type": "sell",
+      "price": 418,
+      "code": "4689"
+    },
+    {
+      "time": "14:38",
+      "type": "sell",
+      "price": 418,
+      "code": "4689"
+    },
+    {
+      "code": "8306",
+      "price": 2795.5,
+      "time": "15:20",
+      "type": "buy"
+    },
+    {
+      "code": "8306",
+      "price": 2805,
+      "time": "15:15",
+      "type": "sell"
+    },
+    {
+      "code": "8306",
+      "price": 2803.5,
+      "time": "15:10",
+      "type": "sell"
+    },
+    {
+      "code": "8306",
+      "price": 2800,
+      "time": "15:05",
+      "type": "buy"
+    },
+    {
+      "code": "8306",
+      "price": 2800.5,
+      "time": "14:58",
+      "type": "buy"
+    },
+    {
+      "code": "8306",
+      "price": 2800,
+      "time": "14:53",
+      "type": "buy"
+    },
+    {
+      "code": "8306",
+      "price": 2803,
       "time": "14:44",
-      "type": "buy",
-      "price": 329,
-      "code": "4169"
+      "type": "sell"
     },
     {
+      "code": "8306",
+      "price": 2800,
+      "time": "14:36",
+      "type": "buy"
+    },
+    {
+      "code": "6330",
+      "price": 2271,
+      "time": "15:23",
+      "type": "buy"
+    },
+    {
+      "code": "6330",
+      "price": 2269,
+      "time": "15:18",
+      "type": "buy"
+    },
+    {
+      "code": "6330",
+      "price": 2271,
+      "time": "15:13",
+      "type": "buy"
+    },
+    {
+      "code": "6330",
+      "price": 2282,
+      "time": "15:08",
+      "type": "buy"
+    },
+    {
+      "code": "6330",
+      "price": 2280,
+      "time": "15:03",
+      "type": "buy"
+    },
+    {
+      "code": "6330",
+      "price": 2285,
+      "time": "14:58",
+      "type": "buy"
+    },
+    {
+      "code": "6330",
+      "price": 2288,
+      "time": "14:53",
+      "type": "buy"
+    },
+    {
+      "code": "6330",
+      "price": 2295,
+      "time": "14:47",
+      "type": "buy"
+    },
+    {
+      "code": "6330",
+      "price": 2301,
+      "time": "14:40",
+      "type": "sell"
+    },
+    {
+      "code": "6330",
+      "price": 2309,
+      "time": "14:35",
+      "type": "sell"
+    },
+    {
+      "code": "4169",
+      "price": 330,
+      "time": "15:14",
+      "type": "sell"
+    },
+    {
+      "code": "4169",
+      "price": 329,
+      "time": "15:07",
+      "type": "buy"
+    },
+    {
+      "code": "4169",
+      "price": 329,
+      "time": "14:49",
+      "type": "buy"
+    },
+    {
+      "code": "4169",
+      "price": 329,
+      "time": "14:44",
+      "type": "buy"
+    },
+    {
+      "code": "4169",
+      "price": 329,
       "time": "14:34",
-      "type": "buy",
-      "price": 329,
-      "code": "4169"
+      "type": "buy"
     },
     {
-      "time": "14:25",
-      "type": "sell",
+      "code": "4169",
       "price": 333,
-      "code": "4169"
+      "time": "14:25",
+      "type": "sell"
     },
     {
+      "code": "4169",
+      "price": 331,
       "time": "14:15",
-      "type": "buy",
-      "price": 331,
-      "code": "4169"
+      "type": "buy"
     },
     {
-      "time": "14:08",
-      "type": "buy",
+      "code": "4169",
       "price": 331,
-      "code": "4169"
+      "time": "14:08",
+      "type": "buy"
     },
     {
       "code": "4689",
@@ -210,79 +300,13 @@
       "price": 5192,
       "time": "15:19",
       "type": "buy"
-    },
-    {
-      "code": "8058",
-      "price": 5217,
-      "time": "15:09",
-      "type": "buy"
-    },
-    {
-      "code": "8058",
-      "price": 5211,
-      "time": "15:04",
-      "type": "buy"
-    },
-    {
-      "code": "8058",
-      "price": 5236,
-      "time": "14:59",
-      "type": "buy"
-    },
-    {
-      "code": "8058",
-      "price": 5235,
-      "time": "14:54",
-      "type": "buy"
-    },
-    {
-      "code": "8058",
-      "price": 5229,
-      "time": "14:49",
-      "type": "buy"
-    },
-    {
-      "code": "8058",
-      "price": 5323,
-      "time": "14:44",
-      "type": "buy"
-    },
-    {
-      "code": "8058",
-      "price": 5365,
-      "time": "14:39",
-      "type": "buy"
-    },
-    {
-      "code": "9432",
-      "price": 152.1,
-      "time": "15:15",
-      "type": "sell"
-    },
-    {
-      "code": "9432",
-      "price": 151.8,
-      "time": "15:00",
-      "type": "buy"
-    },
-    {
-      "code": "9432",
-      "price": 151.8,
-      "time": "14:55",
-      "type": "buy"
-    },
-    {
-      "code": "9432",
-      "price": 151.8,
-      "time": "14:48",
-      "type": "buy"
-    },
-    {
-      "code": "9432",
-      "price": 151.9,
-      "time": "14:41",
-      "type": "buy"
     }
   ],
-  "trades": []
+  "trades": [
+    {
+      "date": "2026/5/6",
+      "code": "4689",
+      "pl": 0
+    }
+  ]
 }

@@ -298,6 +298,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI
       <div class="ival" id="i-sig">--</div>
     </div>
 
+    <div class="icard" id="news-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div class="ilbl" style="font-size: 14px; color: var(--text3); margin-bottom:0;">最新ニュース</div>
+        <button id="news-refresh-btn" style="font-size:10px; background:var(--bg2); border:1px solid var(--border2); color:var(--text2); padding:2px 6px; border-radius:3px; cursor:pointer;" onclick="fetchNews(selCode, true)">更新</button>
+      </div>
+      <div id="news-list" style="font-size:13px; color:var(--text2); max-height:250px; overflow-y:auto;">銘柄を選択してください</div>
+    </div>
+
     <div class="icard" id="ai-advice-card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div class="ilbl" style="font-size: 15px; color: var(--purple); margin-bottom:0;">AI売買判断比較</div>
@@ -400,7 +408,9 @@ const USE_MOCK_ON_FAIL   = true; // サーバー未起動時はモックデー�
 let chartCache = null;
 let stocksCache = [];
 let recomCache = [];
+let newsCache = {}; // { code: { newsHtml, time } }
 let aiAdviceCache = {}; // { code: { decision, reason, score, logic, time } }
+const NEWS_CACHE_MIN = 5; 
 let logEntries  = [];
 let serverOk    = false;
 let currentListTab = 'watch';
@@ -709,12 +719,52 @@ async function fetchChart(code) {
       renderLog();
       checkAlerts(code, chartCache.summary.price);
       // fetchNews(code); // チャート更新ごとの自動取得は廃止
+      fetchNews(code);
     }
   } catch (e) { console.warn('chart fetch err:', e); }
   finally { document.getElementById('loading-overlay').classList.add('hidden'); }
 }
 
+let isNewsLoading = false;
+async function fetchNews(code, force = false) {
+  if (isNewsLoading && !force) return;
+  const now = new Date().getTime();
+  const cached = newsCache[code];
+  const listEl = document.getElementById('news-list');
+  const btn = document.getElementById('news-refresh-btn');
 
+  if (!force && cached && (now - cached.time < NEWS_CACHE_MIN * 60 * 1000)) {
+    listEl.innerHTML = cached.newsHtml;
+    return;
+  }
+
+  isNewsLoading = true;
+  btn.disabled = true;
+  btn.textContent = '...';
+  listEl.innerHTML = '取得中...';
+  try {
+    const r = await fetch(`${API}/api/news/${code}`);
+    const j = await r.json();
+    if (j.status === 'ok') {
+      const html = j.news.map(n => `
+        <div style="margin-bottom:10px; border-bottom:1px solid var(--border2); padding-bottom:6px;">
+          <a href="${n.link}" target="_blank" style="color:var(--blue); text-decoration:none; font-size:13px; display:block;">${n.title}</a>
+          <div style="font-size:10px; color:var(--text3); margin-top:2px;">${n.pubDate}</div>
+        </div>
+      `).join('');
+      listEl.innerHTML = html || 'ニュースはありませんでした';
+      newsCache[code] = { newsHtml: html, time: now };
+    } else {
+      listEl.textContent = '取得できませんでした';
+    }
+  } catch (e) { 
+    listEl.textContent = 'エラーが発生しました';
+  } finally {
+    isNewsLoading = false;
+    btn.disabled = false;
+    btn.textContent = '更新';
+  }
+}
 
 async function fetchAIAdvice(code) {
   if (!serverOk) return;
@@ -932,6 +982,7 @@ async function selectStock(code) {
   renderStockList();
   if (serverOk) {
     await fetchChart(code);
+    fetchNews(code);
   } else {
     loadMockChart(code);
   }
